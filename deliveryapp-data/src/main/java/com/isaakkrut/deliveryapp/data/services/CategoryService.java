@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Service
-public class CategoryService {
+public class CategoryService implements ReadOnlyService<Category, Long>{
     private final CategoryRepository categoryRepository;
 
     public CategoryService(CategoryRepository categoryRepository) {
@@ -20,5 +20,10 @@ public class CategoryService {
         Set<Category> categories = new HashSet<>();
         categoryRepository.findAll().forEach(categories::add);
         return categories;
+    }
+
+    @Override
+    public Category findById(Long aLong) {
+        return categoryRepository.findById(aLong).orElse(null);
     }
 }
