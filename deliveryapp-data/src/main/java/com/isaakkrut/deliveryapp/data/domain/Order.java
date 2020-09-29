@@ -1,6 +1,6 @@
 package com.isaakkrut.deliveryapp.data.domain;
 
-import lombok.Data;
+import lombok.*;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,10 +10,21 @@ import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
-@Data
+@NoArgsConstructor
+@Getter
+@Setter
 @Entity
 @Table(name="orders")
 public class Order extends Base{
+
+    @Builder
+    public Order(Long id, double totalPrice, Set<OrderItem> items, String email, Timestamp orderDate){
+        super(id);
+        this.totalPrice = totalPrice;
+        this.items = items;
+        this.email = email;
+        this.orderDate = orderDate;
+    }
 
     @Column(name="total_price")
     private double totalPrice;

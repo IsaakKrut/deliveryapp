@@ -5,18 +5,33 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.Builder;
 
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
 @Table(name="item")
-@Data
 public class Item extends Base{
-    private String name;
+
+    @Builder
+    public Item(Long id, Category category, String name, String calories, double price, String description){
+        super(id);
+        this.category = category;
+        this.name = name;
+        this.calories = calories;
+        this.price = price;
+        this.description = description;
+    }
 
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
 
+    private String name;
     private String calories;
     private double price;
     private String description;
