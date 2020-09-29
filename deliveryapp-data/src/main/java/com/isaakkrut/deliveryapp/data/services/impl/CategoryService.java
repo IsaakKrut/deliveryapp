@@ -1,14 +1,15 @@
-package com.isaakkrut.deliveryapp.data.services;
+package com.isaakkrut.deliveryapp.data.services.impl;
 
 import com.isaakkrut.deliveryapp.data.domain.Category;
 import com.isaakkrut.deliveryapp.data.repository.CategoryRepository;
+import com.isaakkrut.deliveryapp.data.services.ReadOnlyService;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @Service
-public class CategoryService implements ReadOnlyService<Category, Long>{
+public class CategoryService implements ReadOnlyService<Category, Long> {
     private final CategoryRepository categoryRepository;
 
     public CategoryService(CategoryRepository categoryRepository) {

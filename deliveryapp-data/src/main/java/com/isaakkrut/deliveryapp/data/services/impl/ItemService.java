@@ -1,7 +1,8 @@
-package com.isaakkrut.deliveryapp.data.services;
+package com.isaakkrut.deliveryapp.data.services.impl;
 
 import com.isaakkrut.deliveryapp.data.domain.Item;
 import com.isaakkrut.deliveryapp.data.repository.ItemRepository;
+import com.isaakkrut.deliveryapp.data.services.ReadOnlyService;
 
 import java.util.HashSet;
 import java.util.Set;
