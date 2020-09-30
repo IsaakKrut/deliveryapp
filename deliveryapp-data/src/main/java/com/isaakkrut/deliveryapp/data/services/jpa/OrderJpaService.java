@@ -3,10 +3,12 @@ package com.isaakkrut.deliveryapp.data.services.jpa;
 import com.isaakkrut.deliveryapp.data.domain.Order;
 import com.isaakkrut.deliveryapp.data.repository.OrderRepository;
 import com.isaakkrut.deliveryapp.data.services.OrderService;
+import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.Set;
 
+@Service
 public class OrderJpaService implements OrderService {
 
     private final OrderRepository orderRepository;

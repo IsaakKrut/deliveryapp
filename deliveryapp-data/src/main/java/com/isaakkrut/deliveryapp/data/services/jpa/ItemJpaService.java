@@ -4,10 +4,12 @@ import com.isaakkrut.deliveryapp.data.domain.Category;
 import com.isaakkrut.deliveryapp.data.domain.Item;
 import com.isaakkrut.deliveryapp.data.repository.ItemRepository;
 import com.isaakkrut.deliveryapp.data.services.ItemService;
+import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.Set;
 
+@Service
 public class ItemJpaService implements ItemService {
 
     private final ItemRepository itemRepository;
