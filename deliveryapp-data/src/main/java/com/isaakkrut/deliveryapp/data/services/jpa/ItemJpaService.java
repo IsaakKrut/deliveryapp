@@ -1,5 +1,6 @@
 package com.isaakkrut.deliveryapp.data.services.jpa;
 
+import com.isaakkrut.deliveryapp.data.domain.Category;
 import com.isaakkrut.deliveryapp.data.domain.Item;
 import com.isaakkrut.deliveryapp.data.repository.ItemRepository;
 import com.isaakkrut.deliveryapp.data.services.ItemService;
@@ -25,5 +26,10 @@ public class ItemJpaService implements ItemService {
     @Override
     public Item findById(Long aLong) {
         return itemRepository.findById(aLong).orElse(null);
+    }
+
+    @Override
+    public Set<Item> findAllByCategory(Category category) {
+        return itemRepository.findAllByCategory(category);
     }
 }

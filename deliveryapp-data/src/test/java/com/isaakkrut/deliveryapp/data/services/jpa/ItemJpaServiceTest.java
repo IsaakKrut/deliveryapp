@@ -15,6 +15,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
@@ -65,5 +66,26 @@ class ItemJpaServiceTest {
         //then
         Item returnedItem = service.findById(1L);
         assertEquals(item.getId(), returnedItem.getId());
+    }
+
+    @Test
+    void findAllByCategory(){
+        //given
+        Set<Item> items = new HashSet<>();
+
+        Item item1 = new Item();
+        item1.setId(1L);
+        Item item2 = new Item();
+        item2.setId(2L);
+
+        items.add(item1);
+        items.add(item2);
+
+        //when
+        when(itemRepository.findAllByCategory(any())).thenReturn(items);
+
+        //then
+        Set<Item> returnedItems = service.findAllByCategory(new Category());
+        assertEquals(2, returnedItems.size());
     }
 }
