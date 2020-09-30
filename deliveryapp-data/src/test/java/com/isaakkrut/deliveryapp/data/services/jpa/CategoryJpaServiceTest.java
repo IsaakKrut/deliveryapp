@@ -1,4 +1,4 @@
-package com.isaakkrut.deliveryapp.data.services.impl;
+package com.isaakkrut.deliveryapp.data.services.jpa;
 
 import com.isaakkrut.deliveryapp.data.domain.Category;
 import com.isaakkrut.deliveryapp.data.repository.CategoryRepository;
@@ -18,12 +18,12 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class CategoryServiceTest {
+class CategoryJpaServiceTest {
     @Mock
     CategoryRepository categoryRepository;
 
     @InjectMocks
-    CategoryService service;
+    CategoryJpaService service;
 
     @BeforeEach
     void setUp() {

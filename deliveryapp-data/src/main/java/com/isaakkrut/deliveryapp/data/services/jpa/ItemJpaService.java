@@ -1,17 +1,17 @@
-package com.isaakkrut.deliveryapp.data.services.impl;
+package com.isaakkrut.deliveryapp.data.services.jpa;
 
 import com.isaakkrut.deliveryapp.data.domain.Item;
 import com.isaakkrut.deliveryapp.data.repository.ItemRepository;
-import com.isaakkrut.deliveryapp.data.services.ReadOnlyService;
+import com.isaakkrut.deliveryapp.data.services.ItemService;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class ItemService implements ReadOnlyService<Item, Long> {
+public class ItemJpaService implements ItemService {
 
     private final ItemRepository itemRepository;
 
-    public ItemService(ItemRepository itemRepository) {
+    public ItemJpaService(ItemRepository itemRepository) {
         this.itemRepository = itemRepository;
     }
 
