@@ -3,10 +3,7 @@ version: 2.1
 orbs:
   maven: circleci/maven@0.0.12
 
-
-
-  - run: mvn integration-test cobertura:cobertura
-
-  - run:
-      name: Send to CodeCov
-      command: bash <(curl -s https://codecov.io/bash)
+workflows:
+  maven_test:
+    jobs:
+      - maven/test # checkout, build, test, and upload test results
