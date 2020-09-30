@@ -20,19 +20,15 @@ public class OrderItemJpaService implements OrderItemService {
     }
 
     @Override
-    public Set<Item> getItemsForOrder(Order order) {
+    public Set<OrderItem> getItemsForOrder(Order order) {
         Set<OrderItem> orderItems = orderItemRepository.findAllByOrder(order);
-        return orderItems.stream().
-                map(orderItem -> orderItem.getItem()).
-                collect(Collectors.toSet());
+        return orderItems;
     }
 
     @Override
-    public Set<Order> getOrdersForItem(Item item) {
+    public Set<OrderItem> getOrdersForItem(Item item) {
         Set<OrderItem> orderItems = orderItemRepository.findAllByItem(item);
-        return orderItems.stream().
-                map(orderItem -> orderItem.getOrder()).
-                collect(Collectors.toSet());
+        return orderItems;
     }
 
     @Override
