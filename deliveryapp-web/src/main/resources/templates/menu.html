@@ -4,9 +4,11 @@
     <meta charset="UTF-8">
     <title>Delivery App</title>
 </head>
+<link rel="stylesheet" href="../static/css/index.css" th:href="@{/css/index.css}">
+
 <style>
     body {
-        padding-top: 70px;
+        padding-top: 50px;
     }
 </style>
 <body>
@@ -16,6 +18,32 @@
         <a class="nav-link" th:href="'#' + ${category.name}" th:text="${category.name}"></a>
     </li>
 </ul> <!-- nav nav-tabs -->
+<div id="wrapper">
+    <div id="right-sidebar-wrapper">
+        <div class="card" id="cart-card">
+            <div class="card-header">
+                <h5 class="card-title">Cart</h5>
+            </div>
+            <div class="card-body">
+                <ol >
+                    <li th:each="item : ${order.items}"
+                        th:text="|${item.item.name} $${#numbers.formatDecimal(item.item.price, 0, 'COMMA', 2, 'POINT')}
+                         x${item.quantity} = ${#numbers.formatDecimal(item.item.price * item.quantity, 0, 'COMMA', 2, 'POINT')}|"></li>
+                </ol>
+
+            </div> <!-- card body -->
+            <div class="card-footer">
+                <div class="row d-flex justify-content-between">
+                    <h5 th:text="'Total: $' + ${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 2, 'POINT')}"></h5>
+                    <form class="border-0 d-flex justify-content-end" th:action="'/checkout'" method="post">
+                        <button type="submit" class="btn btn-primary">Checkout</button>
+                    </form>
+                </div>
+            </div> <!-- card footer -->
+        </div> <!-- card -->
+    </div>
+</div> <!-- right-sidebar cart -->
+
 <div class="container">
     <div class="row">
         <div class="col-10">
@@ -41,8 +69,8 @@
             </section> <!-- card -->
         </div>
 
-    </div>
-</div>
+    </div><!-- row -->
+</div> <!-- container-->
 
 
 </body>
