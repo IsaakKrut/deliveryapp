@@ -41,7 +41,7 @@
             </div> <!-- card body -->
             <div class="card-footer">
                 <div class="row d-flex justify-content-between">
-                    <h5 th:text="'Total: $' + ${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 2, 'POINT')}"></h5>
+                    <h5 th:classappend="${order.totalPrice} == 0 ? invisible" th:text="'Total: $' + ${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 2, 'POINT')}"></h5>
                     <form class="border-0 d-flex justify-content-end" th:action="'/checkout'" method="post">
                         <button type="submit" class="btn btn-primary">Checkout</button>
                     </form>

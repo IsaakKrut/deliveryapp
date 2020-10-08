@@ -54,8 +54,6 @@ public class Order extends Base{
         if (!doesExist){
             items.add(OrderItem.builder().order(this).item(item).quantity(1).build());
         }
-        System.out.println("Item: " + item.getName() + ", price: " + item.getPrice());
-        System.out.println("Order size: " + this.items.size() + ", price: " + this.totalPrice);
     }
 
     public void deleteItemById(Long id){
@@ -63,6 +61,10 @@ public class Order extends Base{
             if (orderItem.getItem().getId() == id){
                 // if item is already in the card increase quantity by one
                 this.items.remove(orderItem);
+                totalPrice = 0.0;
+                for (OrderItem item : items){
+                    totalPrice+= item.getQuantity()*item.getItem().getPrice();
+                }
                 break;
             }
         }
