@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Delivery App</title>
+</head>
+<style>
+    body {
+        padding-top: 70px;
+    }
+</style>
+<body>
+<div th:replace="fragments/header :: navbar(${order.totalPrice})"></div>
+<ul class="nav nav-tabs position-fixed bg-white" style="max-width: 10%">
+    <li th:each="category : ${categoriesDTO.categories}" class="nav-item inline-block">
+        <a class="nav-link" th:href="'#' + ${category.name}" th:text="${category.name}"></a>
+    </li>
+</ul> <!-- nav nav-tabs -->
+<div class="container">
+    <div class="row">
+        <div class="col-10">
+            <section th:each="category : ${categoriesDTO.categories}" class="card" th:id="${category.name}">
+                <div class="card-header bg-light sticky-top" style="top: 50px">
+                    <h3 th:text="${category.name}"></h3>
+                </div>
+                <div class="card-body" style="margin-top: 30px">
+                    <ul class="list-group">
+                        <li class="list-group-item" th:each="item : ${category.items}">
+                            <div class="row">
+                                <div class="col-10 d-flex justify-content-between">
+                                    <span th:text="|${item.name}(${item.calories})|"></span>
+                                    <span th:text="'$' + ${#numbers.formatDecimal(item.price, 0, 'COMMA', 2, 'POINT')}">$10.00</span>
+                                </div>
+                                <form class="col-2 border-0 d-flex justify-content-end" th:action="|/order/items/${item.id}|" method="post" th:object="${item}">
+                                    <button type="submit" class="btn btn-primary">Add to Cart</button>
+                                </form>
+                            </div>
+                        </li>
+                    </ul> <!-- list-group -->
+                </div> <!-- card-body -->
+            </section> <!-- card -->
+        </div>
+
+    </div>
+</div>
+
+
+</body>
+</html>
