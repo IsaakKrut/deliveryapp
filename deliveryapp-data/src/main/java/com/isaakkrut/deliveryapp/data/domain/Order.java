@@ -57,4 +57,14 @@ public class Order extends Base{
         System.out.println("Item: " + item.getName() + ", price: " + item.getPrice());
         System.out.println("Order size: " + this.items.size() + ", price: " + this.totalPrice);
     }
+
+    public void deleteItemById(Long id){
+        for (OrderItem orderItem : items){
+            if (orderItem.getItem().getId() == id){
+                // if item is already in the card increase quantity by one
+                this.items.remove(orderItem);
+                break;
+            }
+        }
+    }
 }

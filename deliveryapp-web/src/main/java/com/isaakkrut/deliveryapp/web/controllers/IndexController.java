@@ -3,6 +3,7 @@ package com.isaakkrut.deliveryapp.web.controllers;
 import com.isaakkrut.deliveryapp.data.domain.CategoryListDTO;
 import com.isaakkrut.deliveryapp.data.domain.Item;
 import com.isaakkrut.deliveryapp.data.domain.Order;
+import com.isaakkrut.deliveryapp.data.domain.User;
 import com.isaakkrut.deliveryapp.data.services.CategoryService;
 import com.isaakkrut.deliveryapp.data.services.ItemService;
 import org.springframework.stereotype.Controller;
@@ -13,7 +14,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpServletRequest;
 
 @Controller
-@SessionAttributes("order")
+@SessionAttributes({"order", "user"})
 public class IndexController {
 
     private final CategoryService categoryService;
@@ -27,21 +28,23 @@ public class IndexController {
     @ModelAttribute("order")
     public Order order(){
         return new Order();
+    }
 
+    @ModelAttribute("user")
+    public User user(){
+        return new User();
     }
 
 
     @RequestMapping({"", "/", "/home"})
     public String getIndexPage(Model model){
-        model.addAttribute("order", new Order());
         return "index";
     }
 
     @RequestMapping("/menu")
-    public String getMenu(Model model, @ModelAttribute("order")  Order order){
+    public String getMenu(Model model){
         CategoryListDTO categories = new CategoryListDTO(itemService.findAll(), categoryService.findAll());
         model.addAttribute("categoriesDTO", categories);
-        model.addAttribute("order", order);
         return "menu";
     }
 
@@ -50,7 +53,12 @@ public class IndexController {
 
         Item item = itemService.findById(id);
         order.addItem(item);
-        //attributes.addFlashAttribute("order", order);
+        return "redirect:/menu";
+    }
+
+    @RequestMapping("/order/items/delete/{id}")
+    public String deleteFromCart(@PathVariable Long id, @SessionAttribute("order") Order order){
+        order.deleteItemById(id);
         return "redirect:/menu";
     }
 
@@ -60,8 +68,25 @@ public class IndexController {
         return "notImplemented";
     }
 
-    @RequestMapping("/login")
-    public String getLoginPage(Model model){
+    @RequestMapping("/signin")
+    public String getLoginPage(Model model, @SessionAttribute("user") User user){
+        user.setEmail("krutisaak@yandex.com");
+        return "notImplemented";
+    }
+
+    @RequestMapping("/register")
+    public String getRegistrationPage(Model model){
+        return "notImplemented";
+    }
+
+    @RequestMapping("/signout")
+    public String signout(@SessionAttribute("user") User user){
+        user.clear();
+        return "redirect:/home";
+    }
+
+    @RequestMapping("/account")
+    public String getAccountPage(){
         return "notImplemented";
     }
 
