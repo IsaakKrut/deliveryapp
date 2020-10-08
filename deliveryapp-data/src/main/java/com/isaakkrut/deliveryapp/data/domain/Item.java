@@ -1,9 +1,6 @@
 package com.isaakkrut.deliveryapp.data.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,18 +15,17 @@ import lombok.Builder;
 public class Item extends Base{
 
     @Builder
-    public Item(Long id, Category category, String name, String calories, double price, String description){
+    public Item(Long id, Long categoryId, String name, String calories, double price, String description){
         super(id);
-        this.category = category;
+        this.categoryId = categoryId;
         this.name = name;
         this.calories = calories;
         this.price = price;
         this.description = description;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "category_id")
-    private Category category;
+    @Column(name = "category_id")
+    private Long categoryId;
 
     private String name;
     private String calories;

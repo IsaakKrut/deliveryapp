@@ -29,9 +29,4 @@ public class ItemJpaService implements ItemService {
     public Item findById(Long aLong) {
         return itemRepository.findById(aLong).orElse(null);
     }
-
-    @Override
-    public Set<Item> findAllByCategory(Category category) {
-        return itemRepository.findAllByCategory(category);
-    }
 }
