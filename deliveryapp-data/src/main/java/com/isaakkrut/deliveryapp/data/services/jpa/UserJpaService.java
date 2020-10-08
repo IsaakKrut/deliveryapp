@@ -1,11 +1,13 @@
 package com.isaakkrut.deliveryapp.data.services.jpa;
 
+import com.isaakkrut.deliveryapp.data.domain.Login;
 import com.isaakkrut.deliveryapp.data.domain.User;
 import com.isaakkrut.deliveryapp.data.repository.UserRepository;
 import com.isaakkrut.deliveryapp.data.services.UserService;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -19,6 +21,12 @@ public class UserJpaService implements UserService{
     @Override
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email).orElse(null);
+    }
+
+    @Override
+    public Boolean validateUser(Login login) {
+        Optional<User> userOptional = userRepository.findByEmail(login.getUsername());
+        return userOptional.isPresent() &&  ((String) userOptional.get().getPassword()).equals(login.getPassword());
     }
 
     @Override
