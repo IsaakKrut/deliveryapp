@@ -40,7 +40,7 @@ public class Order extends Base{
     private Timestamp orderDate;// = new Timestamp(new Date().getTime());
 
     public void addItem(Item item){
-        boolean doesExist;
+        boolean doesExist = false;
         this.totalPrice += item.getPrice();
 
         for (OrderItem orderItem : items){
@@ -51,7 +51,9 @@ public class Order extends Base{
                 break;
             }
         }
-        items.add(OrderItem.builder().order(this).item(item).quantity(1).build());
+        if (!doesExist){
+            items.add(OrderItem.builder().order(this).item(item).quantity(1).build());
+        }
         System.out.println("Item: " + item.getName() + ", price: " + item.getPrice());
         System.out.println("Order size: " + this.items.size() + ", price: " + this.totalPrice);
     }

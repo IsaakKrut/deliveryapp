@@ -1,12 +1,9 @@
 package com.isaakkrut.deliveryapp.data.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
 
 import lombok.*;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 
 @Getter
@@ -25,10 +22,14 @@ public class CategoryDTO extends Base {
         this.description = category.getDescription();
         this.name = category.getName();
         this.setId(category.getId());
+        Comparator<Item> nameComparator = Comparator.comparing(Item::getName);
+        items = new TreeSet<>(nameComparator);
+
     }
     private String name;
     private String description;
-    Set<Item> items = new HashSet<>();
+    SortedSet<Item> items;
+
 
     public void addItem(Item item){
         items.add(item);

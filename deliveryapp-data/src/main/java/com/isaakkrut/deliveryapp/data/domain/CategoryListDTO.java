@@ -5,16 +5,16 @@ import com.isaakkrut.deliveryapp.data.services.CategoryService;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Setter
 @Getter
 public class CategoryListDTO {
-    private final Set<CategoryDTO> categories;
+    private SortedSet<CategoryDTO> categories;
 
     public CategoryListDTO(Set<Item> items, Set<Category> categories) {
-        this.categories = new HashSet<>();
+        Comparator<CategoryDTO> nameComparator = Comparator.comparing(CategoryDTO::getName);
+        this.categories = new TreeSet<>(nameComparator);
         categories.forEach(category->{
             CategoryDTO dto = new CategoryDTO(category);
             this.categories.add(dto);
