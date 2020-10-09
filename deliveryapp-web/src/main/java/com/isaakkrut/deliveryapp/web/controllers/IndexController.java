@@ -1,17 +1,23 @@
 package com.isaakkrut.deliveryapp.web.controllers;
 
-import com.isaakkrut.deliveryapp.data.domain.CategoryListDTO;
-import com.isaakkrut.deliveryapp.data.domain.Item;
-import com.isaakkrut.deliveryapp.data.domain.Order;
-import com.isaakkrut.deliveryapp.data.domain.User;
+import com.isaakkrut.deliveryapp.data.converters.UserConverter;
+import com.isaakkrut.deliveryapp.data.domain.*;
+import com.isaakkrut.deliveryapp.data.dto.CategoryListDTO;
+import com.isaakkrut.deliveryapp.data.dto.UserDTO;
 import com.isaakkrut.deliveryapp.data.services.CategoryService;
 import com.isaakkrut.deliveryapp.data.services.ItemService;
+import com.isaakkrut.deliveryapp.data.services.UserService;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 
 @Controller
 @SessionAttributes({"order", "user"})
@@ -19,10 +25,12 @@ public class IndexController {
 
     private final CategoryService categoryService;
     private final ItemService itemService;
+    private final UserService userService;
 
-    public IndexController(CategoryService categoryService, ItemService itemService) {
+    public IndexController(CategoryService categoryService, ItemService itemService, UserService userService) {
         this.categoryService = categoryService;
         this.itemService = itemService;
+        this.userService = userService;
     }
 
     @ModelAttribute("order")
@@ -37,7 +45,7 @@ public class IndexController {
 
 
     @RequestMapping({"", "/", "/home"})
-    public String getIndexPage(Model model){
+    public String getIndexPage(){
         return "index";
     }
 
@@ -64,19 +72,70 @@ public class IndexController {
 
 
     @RequestMapping("/checkout")
-    public String getCheckoutPage(Model model){
-        return "notImplemented";
+    public String getCheckoutPage(Model model, @SessionAttribute("user") User user){
+        if (user.isEmpty()) {
+            return "redirect:/signin";
+        }
+        return "checkout";
     }
 
     @RequestMapping("/signin")
-    public String getLoginPage(Model model, @SessionAttribute("user") User user){
-        user.setEmail("krutisaak@yandex.com");
-        return "notImplemented";
+    public String getLoginPage(Model model){
+        model.addAttribute("login", new Login());
+        return "signin";
+    }
+
+    @PostMapping("/signin")
+    public String signIn(Model model, @ModelAttribute("login") Login login, @ModelAttribute User user){
+        System.out.println("Username: " + login.getUserName() + " , Password: " + login.getUserPassword());
+        if (userService.validateUser(login)){
+            User signedInUser = userService.getUserByEmail(login.getUserName());
+            user.setEmail(signedInUser.getEmail());
+            user.setPassword(signedInUser.getPassword());
+            user.setFirstName(signedInUser.getFirstName());
+            user.setLastName(signedInUser.getLastName());
+            user.setBirthDate(signedInUser.getBirthDate());
+            user.setId(signedInUser.getId());
+            return "redirect:/home";
+        } else {
+            model.addAttribute("error", "Invalid login or password");
+            return "signin";
+        }
+
     }
 
     @RequestMapping("/register")
-    public String getRegistrationPage(Model model){
-        return "notImplemented";
+    public String getRegistrationPage(Model model, @SessionAttribute("user") User user){
+        if (user.isEmpty()) {
+            model.addAttribute("userDTO", new UserDTO());
+            return "registration";
+        }
+        else return "redirect:/home";
+    }
+
+    @PostMapping("/register")
+    public String registerUser(@Valid @ModelAttribute UserDTO newUser,
+                               BindingResult result, @SessionAttribute User user){
+        if (result.hasErrors()){
+            return "registration";
+        }
+        if (userService.getUserByEmail(newUser.getDtoEmail()) != null){
+            newUser.setDtoEmail(null);
+            return "registration";
+        }
+
+        //saving the new user
+        User savedUser = userService.save(UserConverter.userDtoToUser(newUser));
+
+        //storing the new user in the session attribute (signing in)
+        user.setId(savedUser.getId());
+        user.setEmail(savedUser.getEmail());
+        user.setPassword(savedUser.getPassword());
+        user.setFirstName(savedUser.getFirstName());
+        user.setLastName(savedUser.getLastName());
+        user.setBirthDate(savedUser.getBirthDate());
+
+        return "redirect:/home";
     }
 
     @RequestMapping("/signout")
@@ -86,8 +145,14 @@ public class IndexController {
     }
 
     @RequestMapping("/account")
-    public String getAccountPage(){
-        return "notImplemented";
+    public String getAccountPage(@SessionAttribute User user){
+        return "account";
+    }
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        CustomDateEditor editor = new CustomDateEditor(new SimpleDateFormat("yyyy-MM-dd"), true);
+        binder.registerCustomEditor(LocalDate.class, editor);
     }
 
 }
