@@ -10,7 +10,7 @@
     }
 </style>
 <body>
-    <div th:replace="fragments/header :: navbar(5.00)"></div>
+    <div th:replace="fragments/header :: navbar(${order.totalPrice})"></div>
     <div class="container">
         <h2 class="bg-danger text-center">The resource you are looking for has not been implemented yet<br/> Please, come back later</h2>
     </div>
