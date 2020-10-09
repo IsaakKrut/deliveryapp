@@ -25,8 +25,8 @@ public class UserJpaService implements UserService{
 
     @Override
     public Boolean validateUser(Login login) {
-        Optional<User> userOptional = userRepository.findByEmail(login.getUsername());
-        return userOptional.isPresent() &&  ((String) userOptional.get().getPassword()).equals(login.getPassword());
+        Optional<User> userOptional = userRepository.findByEmail(login.getUserName());
+        return userOptional.isPresent() &&  ((String) userOptional.get().getPassword()).equals(login.getUserPassword());
     }
 
     @Override

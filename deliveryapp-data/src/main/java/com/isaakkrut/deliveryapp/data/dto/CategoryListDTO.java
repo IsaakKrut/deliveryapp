@@ -1,7 +1,7 @@
-package com.isaakkrut.deliveryapp.data.domain;
+package com.isaakkrut.deliveryapp.data.dto;
 
-import com.isaakkrut.deliveryapp.data.repository.CategoryRepository;
-import com.isaakkrut.deliveryapp.data.services.CategoryService;
+import com.isaakkrut.deliveryapp.data.domain.Category;
+import com.isaakkrut.deliveryapp.data.domain.Item;
 import lombok.Getter;
 import lombok.Setter;
 

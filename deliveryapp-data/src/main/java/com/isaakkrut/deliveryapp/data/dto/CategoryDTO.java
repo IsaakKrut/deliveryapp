@@ -1,6 +1,9 @@
-package com.isaakkrut.deliveryapp.data.domain;
+package com.isaakkrut.deliveryapp.data.dto;
 
 
+import com.isaakkrut.deliveryapp.data.domain.Base;
+import com.isaakkrut.deliveryapp.data.domain.Category;
+import com.isaakkrut.deliveryapp.data.domain.Item;
 import lombok.*;
 
 import java.util.*;

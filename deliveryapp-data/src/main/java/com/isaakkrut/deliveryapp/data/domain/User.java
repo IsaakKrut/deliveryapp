@@ -2,6 +2,7 @@ package com.isaakkrut.deliveryapp.data.domain;
 
 
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -31,6 +32,7 @@ public class User extends Base {
     private String password;
     private String firstName;
     private String lastName;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthDate;
 
     public void clear(){
@@ -40,5 +42,10 @@ public class User extends Base {
         this.firstName = null;
         this.lastName = null;
         this.birthDate = null;
+    }
+
+    public boolean isEmpty(){
+        return (this.email == null && this.password == null
+        && this.firstName == null && this.lastName == null && this.birthDate == null);
     }
 }
