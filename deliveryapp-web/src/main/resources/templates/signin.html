@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Delivery App</title>
+</head>
+<style>
+    body {
+        padding-top: 50px;
+    }
+</style>
+<body>
+<div th:replace="fragments/header :: navbar(${order.totalPrice})"></div>
+<div class="container">
+    <h2 th:text="'Sign in'" class="mb-5">Sign in</h2>
+    <form method="post" action="/signin" th:object="${login}">
+        <div class="form-group row" >
+            <label for="email" class="col-1">Email</label>
+            <input  type="text" id="email" placeholder="Email" class="col-2" th:field="${login.userName}">
+        </div> <!-- form-group  username row-->
+
+        <div class="form-group row">
+            <label for="password" class="col-1">Password</label>
+            <input  type="password" id="password" placeholder="Password" class="col-2" th:field="${login.userPassword}">
+        </div> <!-- form-group password row-->
+
+        <div class="row">
+            <div class="btn-group col-3  d-flex justify-content-end">
+                <a class="btn bg-light" href="/register" role="button">Register</a>
+                <button type="submit" class="btn btn-primary">Sign in</button>
+            </div>
+        </div>
+
+    </form>
+    <div th:if="${error}" th:text="${error}" class="text-danger">
+        Invalid username and password.
+    </div>
+
+</div>
+
+
+</body>
+</html>
