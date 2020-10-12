@@ -87,8 +87,8 @@ public class IndexController {
 
     @PostMapping("/signin")
     public String signIn(Model model, @ModelAttribute("login") Login login, @ModelAttribute User user){
-        System.out.println("Username: " + login.getUserName() + " , Password: " + login.getUserPassword());
-        if (userService.validateUser(login)){
+
+        if ( user!= null && userService.validateUser(login)){
             User signedInUser = userService.getUserByEmail(login.getUserName());
             user.setEmail(signedInUser.getEmail());
             user.setPassword(signedInUser.getPassword());
