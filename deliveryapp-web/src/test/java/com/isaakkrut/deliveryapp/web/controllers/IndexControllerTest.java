@@ -1,5 +1,7 @@
 package com.isaakkrut.deliveryapp.web.controllers;
 
+import com.isaakkrut.deliveryapp.data.domain.Item;
+import com.isaakkrut.deliveryapp.data.domain.Order;
 import com.isaakkrut.deliveryapp.data.services.CategoryService;
 import com.isaakkrut.deliveryapp.data.services.ItemService;
 import com.isaakkrut.deliveryapp.data.services.UserService;
@@ -13,10 +15,16 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
+import java.util.HashMap;
+import java.util.HashSet;
+
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -37,8 +45,13 @@ class IndexControllerTest {
     @BeforeEach
     void setUp() {
 
+        InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
+        viewResolver.setPrefix("/templates/");
+        viewResolver.setSuffix(".html");
+
         mockMvc = MockMvcBuilders
                 .standaloneSetup(controller)
+                .setViewResolvers(viewResolver)
                 .build();
     }
 
@@ -55,15 +68,41 @@ class IndexControllerTest {
     }
 
     @Test
-    void getMenu() {
+    void getMenu() throws Exception {
+        //when
+        when(itemService.findAll()).thenReturn(new HashSet<>());
+        when(categoryService.findAll()).thenReturn(new HashSet<>());
+
+        //then
+        mockMvc.perform(get("/menu"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("categoriesDTO"))
+                .andExpect(view().name("menu"));
+
+        verify(itemService, times(1)).findAll();
+        verify(categoryService, times(1)).findAll();
     }
 
     @Test
-    void addItemToTheCart() {
+    void addItemToTheCart() throws Exception {
+        Order order = mock(Order.class);
+        //when
+        when(itemService.findById(anyLong())).thenReturn(Item.builder().id(1L).build());
+
+        //then
+        mockMvc.perform(post("/order/items/1").sessionAttr("order", order))
+                .andExpect(status().is3xxRedirection());
+
+        verify(order).addItem(any());
     }
 
     @Test
-    void deleteFromCart() {
+    void deleteFromCart() throws Exception{
+        Order order = mock(Order.class);
+        mockMvc.perform(get("/order/items/delete/1").sessionAttr("order", order))
+                .andExpect(status().is3xxRedirection());
+
+        verify(order).deleteItemById(anyLong());
     }
 
     @Test
