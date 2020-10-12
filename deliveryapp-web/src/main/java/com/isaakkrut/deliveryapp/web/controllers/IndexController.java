@@ -116,9 +116,9 @@ public class IndexController {
     @PostMapping("/register")
     public String registerUser(@Valid @ModelAttribute UserDTO newUser,
                                BindingResult result, @SessionAttribute User user){
-        if (result.hasErrors()){
+       /* if (result.hasErrors()){
             return "registration";
-        }
+        }*/
         if (userService.getUserByEmail(newUser.getDtoEmail()) != null){
             newUser.setDtoEmail(null);
             return "registration";

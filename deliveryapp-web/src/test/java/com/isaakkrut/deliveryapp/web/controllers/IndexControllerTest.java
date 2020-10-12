@@ -4,6 +4,7 @@ import com.isaakkrut.deliveryapp.data.domain.Item;
 import com.isaakkrut.deliveryapp.data.domain.Login;
 import com.isaakkrut.deliveryapp.data.domain.Order;
 import com.isaakkrut.deliveryapp.data.domain.User;
+import com.isaakkrut.deliveryapp.data.dto.UserDTO;
 import com.isaakkrut.deliveryapp.data.services.CategoryService;
 import com.isaakkrut.deliveryapp.data.services.ItemService;
 import com.isaakkrut.deliveryapp.data.services.UserService;
@@ -45,8 +46,13 @@ class IndexControllerTest {
 
     MockMvc mockMvc;
 
+    User mockUser;
+    Order mockOrder;
+
     @BeforeEach
     void setUp() {
+        mockUser = mock(User.class);
+        mockOrder = mock(Order.class);
 
         InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
         viewResolver.setPrefix("/templates/");
@@ -60,6 +66,8 @@ class IndexControllerTest {
 
     @AfterEach
     void tearDown() {
+        mockUser = null;
+        mockOrder = null;
     }
 
     @Test
@@ -88,51 +96,46 @@ class IndexControllerTest {
 
     @Test
     void addItemToTheCart() throws Exception {
-        Order order = mock(Order.class);
         //when
         when(itemService.findById(anyLong())).thenReturn(Item.builder().id(1L).build());
 
         //then
-        mockMvc.perform(post("/order/items/1").sessionAttr("order", order))
+        mockMvc.perform(post("/order/items/1").sessionAttr("order", mockOrder))
                 .andExpect(status().is3xxRedirection());
 
-        verify(order).addItem(any());
+        verify(mockOrder).addItem(any());
     }
 
     @Test
     void deleteFromCart() throws Exception{
-        Order order = mock(Order.class);
-        mockMvc.perform(get("/order/items/delete/1").sessionAttr("order", order))
+        mockMvc.perform(get("/order/items/delete/1").sessionAttr("order", mockOrder))
                 .andExpect(status().is3xxRedirection());
 
-        verify(order).deleteItemById(anyLong());
+        verify(mockOrder).deleteItemById(anyLong());
     }
 
     @Test
     void getCheckoutPageSignedInUser() throws Exception{
-        User user = mock(User.class);
-
         //when
-        when(user.isEmpty()).thenReturn(false);
+        when(mockUser.isEmpty()).thenReturn(false);
 
         //then
-        mockMvc.perform(get("/checkout").sessionAttr("user", user))
+        mockMvc.perform(get("/checkout").sessionAttr("user", mockUser))
                 .andExpect(status().isOk())
                 .andExpect(view().name("checkout"));
 
-        verify(user).isEmpty();
+        verify(mockUser).isEmpty();
 
     }
 
     @Test
     void getCheckoutPageNoUser() throws Exception{
-        User user = mock(User.class);
 
         //when
-        when(user.isEmpty()).thenReturn(true);
-        mockMvc.perform(get("/checkout").sessionAttr("user", user))
+        when(mockUser.isEmpty()).thenReturn(true);
+        mockMvc.perform(get("/checkout").sessionAttr("user", mockUser))
                 .andExpect(status().is3xxRedirection());
-        verify(user).isEmpty();
+        verify(mockUser).isEmpty();
     }
 
     @Test
@@ -173,22 +176,73 @@ class IndexControllerTest {
     }
 
     @Test
-    void getRegistrationPage() {
-    }
-
-    @Test
-    void registerUser() {
-    }
-
-    @Test
     void signout() throws Exception{
-        User user = mock(User.class);
 
         mockMvc.perform(get("/signout")
-                        .sessionAttr("user", user))
+                .sessionAttr("user", mockUser))
                 .andExpect(status().is3xxRedirection());
-        verify(user).clear();
+        verify(mockUser).clear();
     }
+
+    @Test
+    void getRegistrationPageNoSignedInUser() throws Exception{
+        //when
+        when(mockUser.isEmpty()).thenReturn(true);
+
+        //then
+        mockMvc.perform(get("/register")
+                .sessionAttr("user", mockUser))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("userDTO"))
+                .andExpect(view().name("registration"));
+    }
+
+    @Test
+    void getRegistrationPageSignedInUser() throws Exception{
+
+        //when
+        when(mockUser.isEmpty()).thenReturn(false);
+
+        //then
+        mockMvc.perform(get("/register")
+                        .sessionAttr("user", mockUser))
+                .andExpect(status().is3xxRedirection());
+    }
+
+
+    @Test
+    void registerUserExists() throws Exception {
+
+        //when
+        when(userService.getUserByEmail(any())).thenReturn(new User());
+
+        //then
+        mockMvc.perform(post("/register")
+                        .flashAttr("userDTO", new UserDTO())
+                        .sessionAttr("user", mockUser))
+                .andExpect(status().isOk())
+                .andExpect(view().name("registration"));
+
+        verify(userService).getUserByEmail(any());
+    }
+
+
+    @Test
+    void registerUserNotExists() throws Exception{
+        //when
+        when(userService.getUserByEmail(any())).thenReturn(null);
+        when(userService.save(any())).thenReturn(new User());
+
+        //then
+        mockMvc.perform(post("/register")
+                .flashAttr("userDTO", new UserDTO())
+                .sessionAttr("user", new User()))
+                .andExpect(status().is3xxRedirection());
+
+        verify(userService).getUserByEmail(any());
+        verify(userService).save(any());
+    }
+
 
     @Test
     void getAccountPage() {
