@@ -2,6 +2,7 @@ package com.isaakkrut.deliveryapp.web.controllers;
 
 import com.isaakkrut.deliveryapp.data.domain.Item;
 import com.isaakkrut.deliveryapp.data.domain.Order;
+import com.isaakkrut.deliveryapp.data.domain.User;
 import com.isaakkrut.deliveryapp.data.services.CategoryService;
 import com.isaakkrut.deliveryapp.data.services.ItemService;
 import com.isaakkrut.deliveryapp.data.services.UserService;
@@ -17,6 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
+import javax.jws.soap.SOAPBinding;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -106,7 +108,30 @@ class IndexControllerTest {
     }
 
     @Test
-    void getCheckoutPage() {
+    void getCheckoutPageSignedInUser() throws Exception{
+        User user = mock(User.class);
+
+        //when
+        when(user.isEmpty()).thenReturn(false);
+
+        //then
+        mockMvc.perform(get("/checkout").sessionAttr("user", user))
+                .andExpect(status().isOk())
+                .andExpect(view().name("checkout"));
+
+        verify(user).isEmpty();
+
+    }
+
+    @Test
+    void getCheckoutPageNoUser() throws Exception{
+        User user = mock(User.class);
+
+        //when
+        when(user.isEmpty()).thenReturn(true);
+        mockMvc.perform(get("/checkout").sessionAttr("user", user))
+                .andExpect(status().is3xxRedirection());
+        verify(user).isEmpty();
     }
 
     @Test
