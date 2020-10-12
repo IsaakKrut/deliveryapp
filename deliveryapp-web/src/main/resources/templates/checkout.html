@@ -12,7 +12,34 @@
 <body>
 <div th:replace="fragments/header :: navbar(${order.totalPrice})"></div>
 <div class="container">
-    <h2 th:text="'Checkout'">Checkout</h2>
+    <h2 th:text="|Order for ${user.email}|">Order for 'email'</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Quantity</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item : ${order.items}">
+            <td th:text="${item.item.name}"></td>
+            <td th:text="${item.quantity}"></td>
+            <td th:text="${#numbers.formatDecimal(item.item.price * item.quantity, 0, 'COMMA', 2, 'POINT')}"></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td th:text="'Total:'">Total:</td>
+            <td th:text="${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 2, 'POINT')}"></td>
+        </tr>
+        </tbody>
+    </table>
+    <form th:action="@{/order/submit}" method="post">
+        <div class="row d-flex justify-content-end">
+            <button type="submit" class="btn btn-primary">Submit Order</button>
+        </div>
+
+    </form>
 </div>
 
 

@@ -218,7 +218,9 @@ class IndexControllerTest {
 
         //then
         mockMvc.perform(post("/register")
-                        .flashAttr("userDTO", new UserDTO())
+                        .param("dtoEmail", "skakdas@gmail.com")
+                        .param("dtoFirstName", "Isaak")
+                        .param("dtoLastName", "")
                         .sessionAttr("user", mockUser))
                 .andExpect(status().isOk())
                 .andExpect(view().name("registration"));

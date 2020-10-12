@@ -1,6 +1,7 @@
 package com.isaakkrut.deliveryapp.data.services.jpa;
 
 import com.isaakkrut.deliveryapp.data.domain.Order;
+import com.isaakkrut.deliveryapp.data.repository.OrderItemRepository;
 import com.isaakkrut.deliveryapp.data.repository.OrderRepository;
 import com.isaakkrut.deliveryapp.data.services.OrderService;
 import org.springframework.stereotype.Service;
@@ -12,9 +13,11 @@ import java.util.Set;
 public class OrderJpaService implements OrderService {
 
     private final OrderRepository orderRepository;
+    private final OrderItemRepository orderItemRepository;
 
-    public OrderJpaService(OrderRepository orderRepository) {
+    public OrderJpaService(OrderRepository orderRepository, OrderItemRepository orderItemRepository) {
         this.orderRepository = orderRepository;
+        this.orderItemRepository = orderItemRepository;
     }
 
     @Override
@@ -36,7 +39,13 @@ public class OrderJpaService implements OrderService {
 
     @Override
     public Order save(Order object) {
-        return orderRepository.save(object);
+        Order orderToSave = Order.builder().orderDate(object.getOrderDate()).email(object.getEmail()).totalPrice(object.getTotalPrice()).build();
+        Order savedOrder = orderRepository.save(orderToSave);
+        object.getItems().forEach(item->{
+            item.setOrder(savedOrder);
+            orderItemRepository.save(item);
+        });
+        return savedOrder;
     }
 
     @Override

@@ -8,6 +8,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.sql.SQLOutput;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -37,9 +38,13 @@ public class Order extends Base{
     private String email;
 
     @Column(name="order_date")
-    private Timestamp orderDate;// = new Timestamp(new Date().getTime());
+    private Timestamp orderDate;
 
     public void addItem(Item item){
+
+        if (this.items == null){
+            this.items = new HashSet<>();
+        }
         boolean doesExist = false;
         this.totalPrice += item.getPrice();
 
@@ -68,5 +73,13 @@ public class Order extends Base{
                 break;
             }
         }
+    }
+
+    public void clear(){
+        this.totalPrice = 0.0;
+        this.email = null;
+        this.items = null;
+        this.orderDate = null;
+        this.setId(null);
     }
 }

@@ -6,16 +6,18 @@ import com.isaakkrut.deliveryapp.data.dto.CategoryListDTO;
 import com.isaakkrut.deliveryapp.data.dto.UserDTO;
 import com.isaakkrut.deliveryapp.data.services.CategoryService;
 import com.isaakkrut.deliveryapp.data.services.ItemService;
+import com.isaakkrut.deliveryapp.data.services.OrderService;
 import com.isaakkrut.deliveryapp.data.services.UserService;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 
@@ -26,11 +28,13 @@ public class IndexController {
     private final CategoryService categoryService;
     private final ItemService itemService;
     private final UserService userService;
+    private final OrderService orderService;
 
-    public IndexController(CategoryService categoryService, ItemService itemService, UserService userService) {
+    public IndexController(CategoryService categoryService, ItemService itemService, UserService userService, OrderService orderService) {
         this.categoryService = categoryService;
         this.itemService = itemService;
         this.userService = userService;
+        this.orderService = orderService;
     }
 
     @ModelAttribute("order")
@@ -60,7 +64,9 @@ public class IndexController {
     public String addItemToTheCart(@PathVariable Long id, @SessionAttribute("order") Order order){
 
         Item item = itemService.findById(id);
-        order.addItem(item);
+        if (item!= null){
+            order.addItem(item);
+        }
         return "redirect:/menu";
     }
 
@@ -110,22 +116,22 @@ public class IndexController {
             model.addAttribute("userDTO", new UserDTO());
             return "registration";
         }
-        else return "redirect:/home";
+        else return "redirect:/account";
     }
 
     @PostMapping("/register")
-    public String registerUser(@Valid @ModelAttribute UserDTO newUser,
+    public String registerUser(@Valid @ModelAttribute("userDTO") UserDTO userDTO,
                                BindingResult result, @SessionAttribute User user){
-       /* if (result.hasErrors()){
+        if (result.hasErrors()){
             return "registration";
-        }*/
-        if (userService.getUserByEmail(newUser.getDtoEmail()) != null){
-            newUser.setDtoEmail(null);
+        }
+        if (userService.getUserByEmail(userDTO.getDtoEmail()) != null){
+            userDTO.setDtoEmail(null);
             return "registration";
         }
 
         //saving the new user
-        User savedUser = userService.save(UserConverter.userDtoToUser(newUser));
+        User savedUser = userService.save(UserConverter.userDtoToUser(userDTO));
 
         //storing the new user in the session attribute (signing in)
         user.setId(savedUser.getId());
@@ -146,13 +152,36 @@ public class IndexController {
 
     @RequestMapping("/account")
     public String getAccountPage(@SessionAttribute User user){
+        if (user.isEmpty()){
+            return "redirect:/signin";
+        }
         return "account";
     }
+
+    @RequestMapping("/order/submit")
+    public String submitOrder(@SessionAttribute User user, @SessionAttribute Order order){
+        order.setEmail(user.getEmail());
+        order.setOrderDate(new Timestamp(System.currentTimeMillis()));
+
+        //save order
+        orderService.save(order);
+
+        //clear Session order
+        order.clear();
+        return "confirmation";
+    }
+
+
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
         CustomDateEditor editor = new CustomDateEditor(new SimpleDateFormat("yyyy-MM-dd"), true);
         binder.registerCustomEditor(LocalDate.class, editor);
+    }
+
+    @ExceptionHandler(ServletRequestBindingException.class)
+    public String handleMissingSessionAttribute(){
+        return "redirect:/";
     }
 
 }

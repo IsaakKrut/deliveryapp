@@ -7,8 +7,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Past;
 
 import java.time.LocalDate;
 
@@ -30,23 +32,25 @@ public class UserDTO extends Base {
 
 
     @NotBlank
-    @NotNull
+    @Email
     private String dtoEmail;
 
     @NotBlank
-    @NotNull
     private String dtoPassword;
 
 
     @NotBlank
+    @NotNull
     private String dtoFirstName;
 
 
     @NotBlank
+    @NotNull
     private String dtoLastName;
 
 
-    @NotBlank
+    @Past
+    @NotNull
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dtoBirthDate;
 }

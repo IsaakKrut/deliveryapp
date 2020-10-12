@@ -14,31 +14,76 @@
 <div class="container">
     <h2 class="mb-5 text-center" th:text="'Registration form'">Registration forms</h2>
 
-    <form method="post" action="/register" th:object="${userDTO}">
-        <div class="form-group row" >
-            <label for="email" class="col-1">Email</label>
-            <input  type="text" id="email" placeholder="Username" class="col-3" th:field="*{dtoEmail}">
+    <form method="post" th:action="@{/register}" th:object="${userDTO}">
 
-            <label for="password" class="col-1">Password</label>
-            <input  type="password" id="password" placeholder="Password" class="col-3" th:field="*{dtoPassword}">
-        </div> <!-- form-group password row-->
-        <fieldset>
-            <legend>Personal Information</legend>
+        <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger">
+            <p>Please Correct Errors Below</p>
+        </div>
 
-            <div class="form-group row">
-                <label for="firstname" class="col-2 ">First Name</label>
-                <input  type="text" id="firstname" placeholder="First Name" class="col-2" th:field="*{dtoFirstName}">
-            </div> <!-- form-group firstName row-->
-            <div class="form-group row">
-                <label for="lastName" class="col-2 ">Last Name</label>
-                <input  type="text" id="lastName" placeholder="Last Name" class="col-2" th:field="*{dtoLastName}">
-            </div> <!-- form-group lastName row-->
+        <input type="hidden" th:field="*{id}"/>
+        <div class="panel-group">
+            <div class="panel">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="form-group col-3 d-flex justify-content-between" th:classappend="${#fields.hasErrors('dtoEmail')} ? 'has-error'">
+                            <label for="email">Email</label>
+                            <input  type="text" id="email" placeholder="Email" th:field="*{dtoEmail}">
+                            <span class="help-block" th:if="${#fields.hasErrors('dtoEmail')}">
+                            <ul>
+                                <li th:each="err : ${#fields.errors('dtoEmail')}" th:text="${err}"/>
+                            </ul>
+                        </span>
+                        </div>
+                        <div class="form-group col-3 d-flex justify-content-between" th:classappend="${#fields.hasErrors('dtoPassword')} ? 'has-error'">
+                            <label for="password">Password</label>
+                            <input  type="password" id="password" placeholder="Password" th:field="*{dtoPassword}">
+                            <span class="help-block" th:if="${#fields.hasErrors('dtoPassword')}">
+                            <ul>
+                                <li th:each="err : ${#fields.errors('dtoPassword')}" th:text="${err}"/>
+                            </ul>
+                        </span>
+                        </div>
+                </div>
+            </div>
 
-            <div class="form-group row">
-                <label for="birthDate" class="col-2 ">Date of Birth</label>
-                <input  type="date" id="birthDate" class="col-2" th:field="*{dtoBirthDate}">
-            </div> <!-- form-group password row-->
-        </fieldset>
+
+            </div> <!-- username password row-->
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h1 class="panel-title">Personal Information</h1>
+                </div>
+                <div class="panel-body">
+                    <div class="row form-group" th:classappend="${#fields.hasErrors('dtoFirstName')} ? 'has-error'">
+                        <label for="firstname" class="col-2 ">First Name</label>
+                        <input  type="text" id="firstname" placeholder="First Name" class="col-2" th:field="*{dtoFirstName}">
+                        <span class="help-block" th:if="${#fields.hasErrors('dtoFirstName')}">
+                            <ul>
+                                <li th:each="err : ${#fields.errors('dtoFirstName')}" th:text="${err}"/>
+                            </ul>
+                        </span>
+                    </div> <!-- form-group firstName row-->
+                    <div class="form-group row" th:classappend="${#fields.hasErrors('dtoLastName')} ? 'has-error'">
+                        <label for="lastName" class="col-2 ">Last Name</label>
+                        <input  type="text" id="lastName" placeholder="Last Name" class="col-2" th:field="*{dtoLastName}">
+                        <span class="help-block" th:if="${#fields.hasErrors('dtoLastName')}">
+                            <ul>
+                                <li th:each="err : ${#fields.errors('dtoLastName')}" th:text="${err}"/>
+                            </ul>
+                        </span>
+                    </div> <!-- form-group lastName row-->
+
+                    <div class="form-group row" th:classappend="${#fields.hasErrors('dtoBirthDate')} ? 'has-error'">
+                        <label for="birthDate" class="col-2 ">Date of Birth</label>
+                        <input  type="date" id="birthDate" class="col-2" th:field="*{dtoBirthDate}">
+                        <span class="help-block" th:if="${#fields.hasErrors('dtoBirthDate')}">
+                            <ul>
+                                <li th:each="err : ${#fields.errors('dtoBirthDate')}" th:text="${err}"/>
+                            </ul>
+                        </span>
+                    </div> <!-- form-group password row-->
+                </div>
+            </div>
+        </div> <!-- panel-group -->
 
         <div class="row">
             <div class="btn-group col-3  d-flex justify-content-end">
