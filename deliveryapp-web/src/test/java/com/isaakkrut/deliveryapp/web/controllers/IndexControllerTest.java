@@ -1,6 +1,7 @@
 package com.isaakkrut.deliveryapp.web.controllers;
 
 import com.isaakkrut.deliveryapp.data.domain.Item;
+import com.isaakkrut.deliveryapp.data.domain.Login;
 import com.isaakkrut.deliveryapp.data.domain.Order;
 import com.isaakkrut.deliveryapp.data.domain.User;
 import com.isaakkrut.deliveryapp.data.services.CategoryService;
@@ -135,11 +136,40 @@ class IndexControllerTest {
     }
 
     @Test
-    void getLoginPage() {
+    void getLoginPage() throws Exception {
+
+        mockMvc.perform(get("/signin"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("login"))
+                .andExpect(view().name("signin"));
     }
 
     @Test
-    void signIn() {
+    void signInSuccess() throws Exception {
+
+        //when
+        when(userService.validateUser(any())).thenReturn(true);
+        when(userService.getUserByEmail(any())).thenReturn(new User());
+
+        //then
+        mockMvc.perform(post("/signin")
+                .flashAttr("login", new Login())
+                .sessionAttr("user", new User()))
+                .andExpect(status().is3xxRedirection());
+
+        verify(userService).validateUser(any());
+    }
+    @Test
+    void signInFail() throws Exception{
+        //when
+        when(userService.validateUser(any())).thenReturn(false);
+
+        mockMvc.perform(post("/signin")
+                .flashAttr("login", new Login())
+                .sessionAttr("user", new User()))
+            .andExpect(status().isOk())
+            .andExpect(view().name("signin"));
+        verify(userService).validateUser(any());
     }
 
     @Test
@@ -151,7 +181,13 @@ class IndexControllerTest {
     }
 
     @Test
-    void signout() {
+    void signout() throws Exception{
+        User user = mock(User.class);
+
+        mockMvc.perform(get("/signout")
+                        .sessionAttr("user", user))
+                .andExpect(status().is3xxRedirection());
+        verify(user).clear();
     }
 
     @Test
