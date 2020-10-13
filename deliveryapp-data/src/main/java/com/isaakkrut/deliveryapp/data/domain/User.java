@@ -14,9 +14,7 @@ import java.util.Date;
 @Table(name="users")
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
-@AllArgsConstructor
 public class User extends Base {
 
     @Builder

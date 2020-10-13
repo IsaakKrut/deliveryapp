@@ -3,13 +3,11 @@ package com.isaakkrut.deliveryapp.data.converters;
 import com.isaakkrut.deliveryapp.data.domain.User;
 import com.isaakkrut.deliveryapp.data.dto.UserDTO;
 
-import java.time.LocalDate;
-
 public class UserConverter {
 
     public static User userDtoToUser(UserDTO userDTO){
         return User.builder()
-                //.id(userDTO.getId())
+                .id(userDTO.getId())
                 .email(userDTO.getDtoEmail())
                 .password(userDTO.getDtoPassword())
                 .firstName(userDTO.getDtoFirstName())
@@ -20,7 +18,7 @@ public class UserConverter {
 
     public static UserDTO userToUserDTO(User user){
         return UserDTO.builder()
-               // .id(user.getId())
+                .id(user.getId())
                 .dtoEmail(user.getEmail())
                 .dtoPassword(user.getPassword())
                 .dtoFirstName(user.getFirstName())

@@ -15,7 +15,7 @@
     <h2 class="mb-5 text-center" th:text="'Registration form'">Registration forms</h2>
 
     <form action="#"  th:action="@{/register}" th:object="${userDTO}" method="post">
-
+        <input type="hidden" th:field="*{id}"/>
         <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger">
             <p>Please Correct Errors Below</p>
         </div>
@@ -98,7 +98,7 @@
 
         <div class="row">
             <div class="btn-group col-3  d-flex justify-content-end">
-                <button type="submit" class="btn btn-primary">Register</button>
+                <button type="submit" class="btn btn-primary">Submit</button>
             </div>
         </div>
 

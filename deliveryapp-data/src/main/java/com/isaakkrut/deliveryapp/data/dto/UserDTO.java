@@ -1,18 +1,23 @@
 package com.isaakkrut.deliveryapp.data.dto;
 
+import com.isaakkrut.deliveryapp.data.domain.Base;
+import com.isaakkrut.deliveryapp.data.domain.Order;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.*;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
 @NoArgsConstructor
-public class UserDTO {
+public class UserDTO extends Base {
 
     @Builder
-    public UserDTO(String dtoEmail, String dtoPassword, String dtoFirstName, String dtoLastName, Date dtoBirthDate) {
+    public UserDTO(Long id, String dtoEmail, String dtoPassword, String dtoFirstName, String dtoLastName, Date dtoBirthDate) {
+        super(id);
         this.dtoEmail = dtoEmail;
         this.dtoPassword = dtoPassword;
         this.dtoFirstName = dtoFirstName;
@@ -44,4 +49,10 @@ public class UserDTO {
     @NotNull
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date dtoBirthDate;
+
+    Set<Order> orders = new HashSet<>();
+
+    public void addOrder(Order order){
+        orders.add(order);
+    }
 }

@@ -102,7 +102,7 @@ public class IndexController {
             user.setLastName(signedInUser.getLastName());
             user.setBirthDate(signedInUser.getBirthDate());
             user.setId(signedInUser.getId());
-            return "redirect:/home";
+            return "redirect:/account";
         } else {
             model.addAttribute("error", "Invalid login or password");
             return "signin";
@@ -114,7 +114,7 @@ public class IndexController {
     public String getRegistrationPage(@SessionAttribute("user") User user, UserDTO userDTO){
         if (user.isEmpty()) {
             //model.addAttribute("userDTO", new UserDTO());
-            return "registration";
+            return "userform";
         }
         else return "redirect:/account";
     }
@@ -123,15 +123,16 @@ public class IndexController {
     public String registerUser(@Valid UserDTO userDTO,
                                BindingResult result, @SessionAttribute User user){
         if (result.hasErrors()){
-            return "registration";
+            return "userform";
         }
-        if (userService.getUserByEmail(userDTO.getDtoEmail()) != null){
+        if (user.isEmpty() && userService.getUserByEmail(userDTO.getDtoEmail()) != null){
             result.rejectValue("dtoEmail", "user.emailerror", "User already exists");
-            return "registration";
+            return "userform";
         }
 
-        //saving the new user
-        User savedUser = userService.save(UserConverter.userDtoToUser(userDTO));
+        //saving the user
+        User userToSave = UserConverter.userDtoToUser(userDTO);
+        User savedUser = userService.save(userToSave);
 
         //storing the new user in the session attribute (signing in)
         user.setId(savedUser.getId());
@@ -141,7 +142,7 @@ public class IndexController {
         user.setLastName(savedUser.getLastName());
         user.setBirthDate(savedUser.getBirthDate());
 
-        return "redirect:/home";
+        return "redirect:/account";
     }
 
     @RequestMapping("/signout")
@@ -151,11 +152,21 @@ public class IndexController {
     }
 
     @RequestMapping("/account")
-    public String getAccountPage(@SessionAttribute User user){
+    public String getAccountPage(@SessionAttribute User user, Model model){
         if (user.isEmpty()){
             return "redirect:/signin";
         }
+        UserDTO userToDisplay = UserConverter.userToUserDTO(user);
+        orderService.getOrdersByEmail(userToDisplay.getDtoEmail()).forEach(userToDisplay::addOrder);
+
+        model.addAttribute("userToDisplay", userToDisplay);
         return "account";
+    }
+
+    @RequestMapping("account/edit")
+    public String editAccount(@SessionAttribute User user, Model model){
+        model.addAttribute(UserConverter.userToUserDTO(user));
+        return "userform";
     }
 
     @RequestMapping("/order/submit")
