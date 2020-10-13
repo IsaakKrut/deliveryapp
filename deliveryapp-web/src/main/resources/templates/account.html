@@ -12,7 +12,7 @@
 <body>
 <div th:replace="fragments/header :: navbar(${order.totalPrice})"></div>
 <div class="container">
-    <h2 class="mb-5" th:text="'Welcome, ' + ${user.firstName} + ' ' + ${user.lastName}">Account</h2>
+    <h2 class="mb-5" th:text="'Welcome, ' + ${userDto.dtoFirstName} + ' ' + ${userDto.dtoLastName}">Account</h2>
     <div class="panel-group">
         <div class="panel">
             <div class="panel-heading">
@@ -24,23 +24,23 @@
                     <tbody>
                     <tr>
                         <td>Email:</td>
-                        <td th:text="${user.email}">User Email</td>
+                        <td th:text="${userDto.dtoEmail}">User Email</td>
                     </tr>
                     <tr>
                         <td>Password:</td>
-                        <td th:text="${user.password}">User Password</td>
+                        <td th:text="${userDto.dtoPassword}">User Password</td>
                     </tr>
                     <tr>
                         <td>First Name:</td>
-                        <td th:text="${user.firstName}">User First Name</td>
+                        <td th:text="${userDto.dtoFirstName}">User First Name</td>
                     </tr>
                     <tr>
                         <td>Last Name:</td>
-                        <td th:text="${user.lastName}">User Last Name</td>
+                        <td th:text="${userDto.dtoLastName}">User Last Name</td>
                     </tr>
                     <tr>
                         <td>Birth Date:</td>
-                        <td th:text="${#dates.format(user.birthDate, 'dd-MMM-yyyy')}">User Birth Date</td>
+                        <td th:text="${#dates.format(userDto.dtoBirthDate, 'dd-MMM-yyyy')}">User Birth Date</td>
                     </tr>
                     <tr>
                         <td></td>
@@ -60,6 +60,25 @@
                 <h3 class="panel-title">Order History</h3>
             </div> <!-- panel-heading -->
             <div class="panel-body">
+                <div class="list-group" th:each="order : ${userDto.orders}">
+                    <div class="list-group-item">
+                        <div class="mx-5 mt-1 mb-4 row d-flex justify-content-between">
+                            <span th:text="'Order number: ' + ${order.id}"></span>
+                            <span th:text="'Order total: ' + ${order.totalPrice}"></span>
+                            <span th:text="'Order date: ' + ${#dates.format(order.orderDate, 'dd-MMM-yyyy HH:mm')}"></span>
+                        </div>
+
+                        <table class="table bg-light">
+                            <tbody>
+                            <tr th:each="item : ${order.items}">
+                                <td th:text="${item.item.name}"></td>
+                                <td th:text="'x' + ${item.quantity}"></td>
+                                <td th:text="${#numbers.formatDecimal(item.item.price * item.quantity, 0, 'COMMA', 2, 'POINT')}"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
 
             </div> <!-- panel-body -->
         </div> <!-- panel -->

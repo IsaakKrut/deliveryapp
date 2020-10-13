@@ -1,9 +1,12 @@
 package com.isaakkrut.deliveryapp.data.services.jpa;
 
+import com.isaakkrut.deliveryapp.data.domain.Item;
 import com.isaakkrut.deliveryapp.data.domain.Order;
+import com.isaakkrut.deliveryapp.data.domain.OrderItem;
 import com.isaakkrut.deliveryapp.data.repository.OrderItemRepository;
 import com.isaakkrut.deliveryapp.data.repository.OrderRepository;
 import com.isaakkrut.deliveryapp.data.services.OrderService;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -22,7 +25,13 @@ public class OrderJpaService implements OrderService {
 
     @Override
     public Set<Order> getOrdersByEmail(String email) {
-        return orderRepository.findAllByEmail(email);
+        Set<Order> orders = orderRepository.findAllByEmail(email);
+        orders.forEach(order ->{
+            Set<OrderItem> items = orderItemRepository.findAllByOrder(order);
+            items.forEach(order::addOrderItem);
+        });
+
+        return orders;
     }
 
     @Override

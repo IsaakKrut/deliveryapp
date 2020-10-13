@@ -40,6 +40,10 @@ public class Order extends Base{
     @Column(name="order_date")
     private Timestamp orderDate;
 
+    public void addOrderItem(OrderItem orderItem){
+        this.items.add(orderItem);
+    }
+
     public void addItem(Item item){
 
         if (this.items == null){
