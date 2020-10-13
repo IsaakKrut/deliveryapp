@@ -1,6 +1,8 @@
 package com.isaakkrut.deliveryapp.data.services.jpa;
 
 import com.isaakkrut.deliveryapp.data.domain.Order;
+import com.isaakkrut.deliveryapp.data.domain.OrderItem;
+import com.isaakkrut.deliveryapp.data.repository.OrderItemRepository;
 import com.isaakkrut.deliveryapp.data.repository.OrderRepository;
 import org.aspectj.weaver.ast.Or;
 import org.junit.jupiter.api.AfterEach;
@@ -25,6 +27,9 @@ import static org.junit.jupiter.api.Assertions.*;
 class OrderJpaServiceTest {
     @Mock
     OrderRepository orderRepository;
+
+    @Mock
+    OrderItemRepository orderItemRepository;
 
     @InjectMocks
     OrderJpaService service;
@@ -53,6 +58,7 @@ class OrderJpaServiceTest {
     void getOrdersByEmail() {
         //when
         when(orderRepository.findAllByEmail(anyString())).thenReturn(orders);
+        when(orderItemRepository.findAllByOrder(any())).thenReturn(new HashSet<>());
 
         //then
         Set<Order> returnedOrders = service.getOrdersByEmail("ok@gmail.com");

@@ -158,7 +158,6 @@ public class IndexController {
         }
         UserDTO userToDisplay = UserConverter.userToUserDTO(user);
         orderService.getOrdersByEmail(userToDisplay.getDtoEmail()).forEach(userToDisplay::addOrder);
-        System.out.println(userToDisplay.getOrders().size() + " orders for user: "+ userToDisplay.getDtoEmail());
         model.addAttribute("userDto", userToDisplay);
         return "account";
     }
