@@ -111,22 +111,22 @@ public class IndexController {
     }
 
     @RequestMapping("/register")
-    public String getRegistrationPage(Model model, @SessionAttribute("user") User user){
+    public String getRegistrationPage(@SessionAttribute("user") User user, UserDTO userDTO){
         if (user.isEmpty()) {
-            model.addAttribute("userDTO", new UserDTO());
+            //model.addAttribute("userDTO", new UserDTO());
             return "registration";
         }
         else return "redirect:/account";
     }
 
     @PostMapping("/register")
-    public String registerUser(@Valid @ModelAttribute("userDTO") UserDTO userDTO,
+    public String registerUser(@Valid UserDTO userDTO,
                                BindingResult result, @SessionAttribute User user){
         if (result.hasErrors()){
             return "registration";
         }
         if (userService.getUserByEmail(userDTO.getDtoEmail()) != null){
-            userDTO.setDtoEmail(null);
+            result.rejectValue("dtoEmail", "user.emailerror", "User already exists");
             return "registration";
         }
 

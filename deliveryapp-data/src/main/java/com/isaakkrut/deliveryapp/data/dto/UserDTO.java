@@ -1,27 +1,18 @@
 package com.isaakkrut.deliveryapp.data.dto;
 
-import com.isaakkrut.deliveryapp.data.domain.Base;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Past;
-
-import java.time.LocalDate;
+import javax.validation.constraints.*;
+import java.util.Date;
 
 @Getter
 @Setter
 @NoArgsConstructor
-public class UserDTO extends Base {
+public class UserDTO {
 
     @Builder
-    public UserDTO(Long id,String dtoEmail,String dtoPassword,String dtoFirstName,String dtoLastName,LocalDate dtoBirthDate) {
-        super(id);
+    public UserDTO(String dtoEmail, String dtoPassword, String dtoFirstName, String dtoLastName, Date dtoBirthDate) {
         this.dtoEmail = dtoEmail;
         this.dtoPassword = dtoPassword;
         this.dtoFirstName = dtoFirstName;
@@ -36,21 +27,21 @@ public class UserDTO extends Base {
     private String dtoEmail;
 
     @NotBlank
+    @Size(min=8, max=20)
     private String dtoPassword;
 
 
     @NotBlank
-    @NotNull
+    @Size(min=2, max=30)
     private String dtoFirstName;
 
 
     @NotBlank
-    @NotNull
+    @Size(min=2, max=30)
     private String dtoLastName;
 
 
-    @Past
     @NotNull
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDate dtoBirthDate;
+    private Date dtoBirthDate;
 }

@@ -7,6 +7,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.time.LocalDate;
+import java.util.Date;
 
 
 @Entity
@@ -19,7 +20,7 @@ import java.time.LocalDate;
 public class User extends Base {
 
     @Builder
-    public User(Long id, String email, String password, String firstName, String lastName, LocalDate birthDate) {
+    public User(Long id, String email, String password, String firstName, String lastName, Date birthDate) {
         super(id);
         this.email = email;
         this.password = password;
@@ -33,7 +34,7 @@ public class User extends Base {
     private String firstName;
     private String lastName;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDate birthDate;
+    private Date birthDate;
 
     public void clear(){
         this.setId(null);
