@@ -194,7 +194,7 @@ class IndexControllerTest {
                 .sessionAttr("user", mockUser))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("userDTO"))
-                .andExpect(view().name("registration"));
+                .andExpect(view().name("userform"));
     }
 
     @Test
@@ -211,38 +211,36 @@ class IndexControllerTest {
 
 
     @Test
-    void registerUserExists() throws Exception {
-
-        //when
-        when(userService.getUserByEmail(any())).thenReturn(new User());
+    void registerUserFail() throws Exception{
 
         //then
         mockMvc.perform(post("/register")
-                        .param("dtoEmail", "skakdas@gmail.com")
-                        .param("dtoFirstName", "Isaak")
-                        .param("dtoLastName", "")
-                        .sessionAttr("user", mockUser))
-                .andExpect(status().isOk())
-                .andExpect(view().name("registration"));
+                .flashAttr("userDTO", new UserDTO())
+                .sessionAttr("user", new User()))
+                .andExpect(view().name("userform"));
 
-        verify(userService).getUserByEmail(any());
+        verify(userService, times(0)).getUserByEmail(any());
+        verify(userService, times(0)).save(any());
     }
 
-
     @Test
-    void registerUserNotExists() throws Exception{
+    void registerUserSuccess() throws Exception{
+
         //when
         when(userService.getUserByEmail(any())).thenReturn(null);
         when(userService.save(any())).thenReturn(new User());
 
         //then
         mockMvc.perform(post("/register")
-                .flashAttr("userDTO", new UserDTO())
-                .sessionAttr("user", new User()))
+                    .param("dtoEmail", "ik@gmail.com")
+                    .param("dtoPassword", "12345678")
+                    .param("dtoFirstName", "Isaak")
+                    .param("dtoLastName", "Krut")
+                    .param("dtoBirthDate", "1999-01-07")
+                    .sessionAttr("user", new User()))
                 .andExpect(status().is3xxRedirection());
 
-        verify(userService).getUserByEmail(any());
-        verify(userService).save(any());
+        verify(userService, times(1)).save(any());
     }
 
 
