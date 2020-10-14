@@ -18,4 +18,6 @@ throughout application.
 
 Used CircleCI continuous integration tool and Project Lombok.
 
+Used JavaMailSender interface to send confirmation emails to the users.
+
 Refactored https://github.com/IsaakKrut/FoodDeliveryApp from Spring REST->React.js into Spring MVC application
