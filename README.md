@@ -1,8 +1,8 @@
 [![CircleCI](https://circleci.com/gh/IsaakKrut/springmvc-deliveryapp.svg?style=svg)](https://circleci.com/gh/IsaakKrut/deliveryapp)
 
 
-Spring MVC application that mimics behaviour of an online shopping service or food delivery. It stores User and
-Shopping Cart objects as session attributes which are available to different views throughout application.
+Spring MVC application that mimics the behavior of an online shopping service or food delivery app. It stores User and
+Shopping Cart objects as session attributes which are available to different views throughout the application.
 
 It uses MySQL database and Hibernate JPA specification to map objects to their corresponding repositories.
 
