@@ -9,11 +9,11 @@ It uses MySQL database and Hibernate JPA specification to map objects to their c
 Service layer implements custom interfaces, which are being injected into controllers thus adhering to
 SOLID programming principles.
 
-Thymeleaf template engine is used to render view to the user. Bootstrap framework helps with styling of these views.
+Thymeleaf template engine is used to render views to the user. Bootstrap framework helps with styling of these views.
 
 Used JUnit5 to test services and controllers.
 
-Used Annotation-based and Java-based configuration as well as constructor-based dependency injection 
+Used Annotation-based and Java-based configurations as well as constructor-based dependency injection 
 throughout application.
 
 Used CircleCI continuous integration tool and Project Lombok.
