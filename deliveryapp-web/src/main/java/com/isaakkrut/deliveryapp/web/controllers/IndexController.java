@@ -134,6 +134,8 @@ public class IndexController {
         User userToSave = UserConverter.userDtoToUser(userDTO);
         User savedUser = userService.save(userToSave);
 
+        emailService.welcomeEmail(savedUser);
+
         //storing the new user in the session attribute (signing in)
         user.setId(savedUser.getId());
         user.setEmail(savedUser.getEmail());
@@ -170,7 +172,14 @@ public class IndexController {
 
     @RequestMapping("account/delete")
     public String deleteAccount(@SessionAttribute User user){
+
+        //delete user from the database
         userService.delete(user);
+
+        //send a last email
+        emailService.deleteAccountEmail(user);
+
+        //clear user from the session
         user.clear();
         return "redirect:/home";
     }
