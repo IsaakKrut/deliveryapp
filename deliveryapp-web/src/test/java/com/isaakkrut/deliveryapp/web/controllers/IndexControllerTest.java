@@ -6,13 +6,13 @@ import com.isaakkrut.deliveryapp.data.domain.Order;
 import com.isaakkrut.deliveryapp.data.domain.User;
 import com.isaakkrut.deliveryapp.data.dto.UserDTO;
 import com.isaakkrut.deliveryapp.data.services.CategoryService;
+import com.isaakkrut.deliveryapp.data.services.EmailService;
 import com.isaakkrut.deliveryapp.data.services.ItemService;
 import com.isaakkrut.deliveryapp.data.services.UserService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.platform.engine.TestExecutionResult;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -20,8 +20,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
-import javax.jws.soap.SOAPBinding;
-import java.util.HashMap;
 import java.util.HashSet;
 
 import static org.mockito.Mockito.*;
@@ -40,6 +38,8 @@ class IndexControllerTest {
     ItemService itemService;
     @Mock
     UserService userService;
+    @Mock
+    EmailService emailService;
 
     @InjectMocks
     IndexController controller;
