@@ -4,10 +4,7 @@ import com.isaakkrut.deliveryapp.data.converters.UserConverter;
 import com.isaakkrut.deliveryapp.data.domain.*;
 import com.isaakkrut.deliveryapp.data.dto.CategoryListDTO;
 import com.isaakkrut.deliveryapp.data.dto.UserDTO;
-import com.isaakkrut.deliveryapp.data.services.CategoryService;
-import com.isaakkrut.deliveryapp.data.services.ItemService;
-import com.isaakkrut.deliveryapp.data.services.OrderService;
-import com.isaakkrut.deliveryapp.data.services.UserService;
+import com.isaakkrut.deliveryapp.data.services.*;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,12 +22,15 @@ import java.time.LocalDate;
 @SessionAttributes({"order", "user"})
 public class IndexController {
 
+    private final EmailService emailService;
     private final CategoryService categoryService;
     private final ItemService itemService;
     private final UserService userService;
     private final OrderService orderService;
 
-    public IndexController(CategoryService categoryService, ItemService itemService, UserService userService, OrderService orderService) {
+    public IndexController(EmailService emailService, CategoryService categoryService,
+                           ItemService itemService, UserService userService, OrderService orderService) {
+        this.emailService = emailService;
         this.categoryService = categoryService;
         this.itemService = itemService;
         this.userService = userService;
@@ -174,7 +174,11 @@ public class IndexController {
         order.setOrderDate(new Timestamp(System.currentTimeMillis()));
 
         //save order
-        orderService.save(order);
+        Order savedOrder = orderService.save(order);
+        order.setId(savedOrder.getId());
+
+        //send confirmation email
+        emailService.sendOrderConfirmation(order);
 
         //clear Session order
         order.clear();

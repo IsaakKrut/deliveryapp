@@ -64,7 +64,7 @@
                     <div class="list-group-item">
                         <div class="mx-5 mt-1 mb-4 row d-flex justify-content-between">
                             <span th:text="'Order number: ' + ${order.id}"></span>
-                            <span th:text="'Order total: ' + ${order.totalPrice}"></span>
+                            <span th:text="'Order total: $' + ${order.totalPrice}"></span>
                             <span th:text="'Order date: ' + ${#dates.format(order.orderDate, 'dd-MMM-yyyy HH:mm')}"></span>
                         </div>
 
