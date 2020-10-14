@@ -168,6 +168,13 @@ public class IndexController {
         return "userform";
     }
 
+    @RequestMapping("account/delete")
+    public String deleteAccount(@SessionAttribute User user){
+        userService.delete(user);
+        user.clear();
+        return "redirect:/home";
+    }
+
     @RequestMapping("/order/submit")
     public String submitOrder(@SessionAttribute User user, @SessionAttribute Order order){
         order.setEmail(user.getEmail());

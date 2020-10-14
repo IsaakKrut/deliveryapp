@@ -46,7 +46,13 @@
                         <td></td>
                         <td>
                             <form th:action="@{/account/edit}" method="get">
-                                <button class="btn btn-primary" type="submit">Edit</button>
+                                <div class="row">
+                                    <div class="btn-group">
+                                        <a class="btn btn-danger mr-1" href="/account/delete" role="button">Delete Account</a>
+                                        <button class="btn btn-primary" type="submit">Edit</button>
+                                    </div>
+                                </div>
+
                             </form>
                         </td>
                     </tr>
