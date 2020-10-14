@@ -1,4 +1,4 @@
-[![CircleCI](https://circleci.com/gh/IsaakKrut/deliveryapp.svg?style=svg)](https://circleci.com/gh/IsaakKrut/deliveryapp)
+[![CircleCI](https://circleci.com/gh/IsaakKrut/springmvc-deliveryapp.svg?style=svg)](https://circleci.com/gh/IsaakKrut/deliveryapp)
 
 
 Spring MVC application that mimics behaviour of an online shopping service or food delivery. It stores User and
