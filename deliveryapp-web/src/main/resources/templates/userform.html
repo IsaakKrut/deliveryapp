@@ -12,9 +12,8 @@
 <body>
 <div th:replace="fragments/header :: navbar(${order.totalPrice})"></div>
 <div class="container">
-    <h2 class="mb-5 text-center" th:text="'Registration form'">Registration forms</h2>
 
-    <form action="#"  th:action="@{/register}" th:object="${userDTO}" method="post">
+    <form action="#"  th:action="@{/register}" th:object="${userDTO}" method="post" class="mt-5">
         <input type="hidden" th:field="*{id}"/>
         <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger">
             <p>Please Correct Errors Below</p>
@@ -25,7 +24,7 @@
                 <div class="panel-body">
                     <div>
                         <div class="form-group row" th:classappend="${#fields.hasErrors('dtoEmail')} ? 'has-error'">
-                            <label class="col-1" for="email">Email</label>
+                            <label class="col-1" for="email" th:text="#{email}">Email</label>
                             <input class="col-2" type="text" id="email" placeholder="Email" th:field="*{dtoEmail}">
                         </div>
                         <div class="row">
@@ -38,7 +37,7 @@
                     </div>
                     <div>
                         <div class="form-group row" th:classappend="${#fields.hasErrors('dtoPassword')} ? 'has-error'">
-                            <label class="col-1" for="password">Password</label>
+                            <label class="col-1" for="password" th:text="#{password}">Password</label>
                             <input class="col-2" type="password" id="password" placeholder="Password" th:field="*{dtoPassword}">
                         </div>
                         <div class="row">
@@ -56,11 +55,11 @@
             </div> <!-- username password row-->
             <div class="panel panel-primary">
                 <div class="panel-heading">
-                    <h1 class="panel-title">Personal Information</h1>
+                    <h1 class="panel-title" th:text="#{personalInfo}">Personal Information</h1>
                 </div>
                 <div class="panel-body">
                     <div class="row form-group" th:classappend="${#fields.hasErrors('dtoFirstName')} ? 'has-error'">
-                        <label for="firstname" class="col-2 ">First Name</label>
+                        <label for="firstname" class="col-2 " th:text="#{firstName}">First Name</label>
                         <input  type="text" id="firstname" placeholder="First Name" class="col-2" th:field="*{dtoFirstName}">
                     </div> <!-- form-group firstName row-->
                     <div class="row">
@@ -71,7 +70,7 @@
                         </span>
                     </div>
                     <div class="form-group row" th:classappend="${#fields.hasErrors('dtoLastName')} ? 'has-error'">
-                        <label for="lastName" class="col-2 ">Last Name</label>
+                        <label for="lastName" class="col-2 " th:text="#{lastName}">Last Name</label>
                         <input  type="text" id="lastName" placeholder="Last Name" class="col-2" th:field="*{dtoLastName}">
                     </div> <!-- form-group lastName row-->
                     <div class="row">
@@ -82,7 +81,7 @@
                         </span>
                     </div>
                     <div class="form-group row" th:classappend="${#fields.hasErrors('dtoBirthDate')} ? 'has-error'">
-                        <label for="birthDate" class="col-2 ">Date of Birth</label>
+                        <label for="birthDate" class="col-2 " th:text="#{dateOfBirth}">Date of Birth</label>
                         <input  type="date" id="birthDate" class="col-2" th:field="*{dtoBirthDate}">
                     </div> <!-- form-group password row-->
                     <div class="row">
@@ -98,7 +97,7 @@
 
         <div class="row">
             <div class="btn-group col-3  d-flex justify-content-end">
-                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="submit" class="btn btn-primary" th:text="#{submit}">Submit</button>
             </div>
         </div>
 

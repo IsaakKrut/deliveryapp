@@ -12,34 +12,33 @@
 <body>
 <div th:replace="fragments/header :: navbar(${order.totalPrice})"></div>
 <div class="container">
-    <h2 class="mb-5" th:text="'Welcome, ' + ${userDto.dtoFirstName} + ' ' + ${userDto.dtoLastName}">Account</h2>
-    <div class="panel-group">
+    <div class="panel-group mt-5" >
         <div class="panel">
             <div class="panel-heading">
-                <h3 class="panel-title">Personal Information</h3>
+                <h3 class="panel-title" th:text="#{personalInfo}">Personal Information</h3>
             </div> <!-- panel-heading -->
 
             <div class="panel-body">
                 <table class="table">
                     <tbody>
                     <tr>
-                        <td>Email:</td>
+                        <td th:text="#{email}">Email</td>
                         <td th:text="${userDto.dtoEmail}">User Email</td>
                     </tr>
                     <tr>
-                        <td>Password:</td>
+                        <td th:text="#{password}">Password</td>
                         <td th:text="${userDto.dtoPassword}">User Password</td>
                     </tr>
                     <tr>
-                        <td>First Name:</td>
+                        <td th:text="#{firstName}">First Name</td>
                         <td th:text="${userDto.dtoFirstName}">User First Name</td>
                     </tr>
                     <tr>
-                        <td>Last Name:</td>
+                        <td th:text="#{lastName}">Last Nam:</td>
                         <td th:text="${userDto.dtoLastName}">User Last Name</td>
                     </tr>
                     <tr>
-                        <td>Birth Date:</td>
+                        <td th:text="#{dateOfBirth}">Birth Date</td>
                         <td th:text="${#dates.format(userDto.dtoBirthDate, 'dd-MMM-yyyy')}">User Birth Date</td>
                     </tr>
                     <tr>
@@ -48,8 +47,8 @@
                             <form th:action="@{/account/edit}" method="get">
                                 <div class="row">
                                     <div class="btn-group">
-                                        <a class="btn btn-danger mr-1" href="/account/delete" role="button">Delete Account</a>
-                                        <button class="btn btn-primary" type="submit">Edit</button>
+                                        <a class="btn btn-danger mr-1" href="/account/delete" role="button" th:text="#{deleteAccount}">Delete Account</a>
+                                        <button class="btn btn-primary" type="submit" th:text="#{edit}">Edit</button>
                                     </div>
                                 </div>
 
@@ -63,7 +62,7 @@
 
         <div class="panel">
             <div class="panel-heading">
-                <h3 class="panel-title">Order History</h3>
+                <h3 class="panel-title" th:text="#{orderHistory}">Order History</h3>
             </div> <!-- panel-heading -->
             <div class="panel-body">
                 <div class="list-group" th:each="order : ${userDto.orders}">

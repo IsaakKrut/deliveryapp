@@ -7,27 +7,26 @@
 <body>
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-    <a class="navbar-brand" href="/home">Welcome to Isaak's</a>
+    <a class="navbar-brand" href="/home" th:text="#{header.welcome}">Welcome</a>
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
             <li className="nav-item active" >
-                <a class="nav-link" href="/home">Home
-                    <span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="/home" th:text="#{header.home}">Home</a>
             </li>
             <li className="nav-item" >
-                <a class="nav-link" href="/menu">Menu</a>
+                <a class="nav-link" href="/menu" th:text="#{header.menu}">Menu</a>
             </li>
             <li className="nav-item" >
-                <a class="nav-link" href="/checkout" th:if="${total > 0}" th:text="'Checkout $' + ${#numbers.formatDecimal(total, 0, 'COMMA', 2, 'POINT')}">Checkout</a>
-                <a th:if="${total == 0}" class="nav-link disabled">Checkout</a>
+                <a class="nav-link" href="/checkout" th:if="${total > 0}" th:text="#{header.checkout} + ' $' + ${#numbers.formatDecimal(total, 0, 'COMMA', 2, 'POINT')}">Checkout</a>
+                <a th:if="${total == 0}" class="nav-link disabled" th:text="#{header.checkout}">Checkout</a>
             </li>
             <li className="nav-item" >
-                <a th:if="${user.isEmpty()}" class="nav-link" href="/signin">Sign in</a>
-                <a th:if="${!user.isEmpty()}" class="nav-link" href="/signout">Sign out</a>
+                <a th:if="${user.isEmpty()}" class="nav-link" href="/signin" th:text="#{header.signin}">Sign in</a>
+                <a th:if="${!user.isEmpty()}" class="nav-link" href="/signout" th:text="#{header.signout}">Sign out</a>
             </li>
             <li className="nav-item">
-                <a th:if="${!user.isEmpty()}" class="nav-link" href="/account">Account</a>
+                <a th:if="${!user.isEmpty()}" class="nav-link" href="/account" th:text="#{header.account}">Account</a>
             </li>
         </ul>
     </div>
