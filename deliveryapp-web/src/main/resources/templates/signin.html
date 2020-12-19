@@ -12,15 +12,15 @@
 <body>
 <div th:replace="fragments/header :: navbar(${order.totalPrice})"></div>
 <div class="container">
-    <form method="post" action="/signin" th:object="${login}" class="mt-5">
+    <form method="post" action="/login" class="mt-5">
         <div class="form-group row" >
-            <label for="email" class="col-1 mr-2" th:text="#{email}">Email</label>
-            <input  type="text" id="email" placeholder="Email" class="col-2" th:field="${login.userName}">
+            <label for="username" class="col-1 mr-2" th:text="#{email}">Email</label>
+            <input  type="text" id="username" name="username" placeholder="Email" class="col-2">
         </div> <!-- form-group  username row-->
 
         <div class="form-group row">
             <label for="password" class="col-1 mr-2" th:text="#{password}">Password</label>
-            <input  type="password" id="password" placeholder="Password" class="col-2" th:field="${login.userPassword}">
+            <input  type="password" id="password" name="password" placeholder="Password" class="col-2">
         </div> <!-- form-group password row-->
 
         <div class="row">
@@ -37,6 +37,6 @@
 
 </div>
 
-
+<div th:replace="fragments/footer :: footer"></div>
 </body>
 </html>
