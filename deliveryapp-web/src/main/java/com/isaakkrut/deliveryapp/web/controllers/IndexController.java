@@ -128,9 +128,23 @@ public class IndexController {
     @RequestMapping("account/edit")
     public String editAccount(Principal principal, Model model){
         User user = userService.getUserByEmail(principal.getName());
-        model.addAttribute(UserConverter.userToUserDTO(user));
-        return "userform";
+        model.addAttribute("userDto", UserConverter.userToUserDTO(user));
+        return "editform";
     }
+
+    @PostMapping("account/edit/submit")
+    public String editAccountSubmit(@ModelAttribute("userDto") @Valid UserDTO userDTO,
+                                    BindingResult result, Model model){
+
+        if (result.hasErrors()){
+            return "editform";
+        }
+
+        userService.save(UserConverter.userDtoToUser(userDTO));
+
+        return "redirect:/account";
+    }
+
 
 
     @RequestMapping("account/delete")

@@ -43,7 +43,14 @@ public class UserJpaService implements UserService{
 
     @Override
     public User save(User object) {
-        return userRepository.save(object);
+        Optional<User> user = userRepository.findByEmail(object.getEmail());
+        if (user.isPresent()){
+            User updatedUser = user.get();
+            updatedUser.setFirstName(object.getFirstName());
+            updatedUser.setLastName(object.getLastName());
+            updatedUser.setBirthDate(object.getBirthDate());
+            return userRepository.save(updatedUser);
+        } else return userRepository.save(object);
     }
 
     @Override
