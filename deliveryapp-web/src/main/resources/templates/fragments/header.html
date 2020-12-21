@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" th:fragment="navbar(total)">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      th:fragment="navbar(total)">
 <head>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
@@ -22,11 +24,17 @@
                 <a th:if="${total == 0}" class="nav-link disabled" th:text="#{header.checkout}">Checkout</a>
             </li>
             <li className="nav-item" >
-                <a th:if="${user.isEmpty()}" class="nav-link" href="/signin" th:text="#{header.signin}">Sign in</a>
-                <a th:if="${!user.isEmpty()}" class="nav-link" href="/signout" th:text="#{header.signout}">Sign out</a>
+                <a sec:authorize="isAnonymous()" class="nav-link" href="/signin" th:text="#{header.signin}">Sign in</a>
+                <a sec:authorize="isAuthenticated()" class="nav-link" href="/signout" th:text="#{header.signout}">Sign out</a>
             </li>
             <li className="nav-item">
-                <a th:if="${!user.isEmpty()}" class="nav-link" href="/account" th:text="#{header.account}">Account</a>
+                <a sec:authorize="isAuthenticated()" class="nav-link" href="/account" th:text="#{header.account}">Account</a>
+            </li>
+            <li>
+                <a sec:authorize="hasRole('ROLE_ADMIN')">Admin</a>
+                <a sec:authorize="hasRole('ROLE_USER')">Customer</a>
+                <a sec:authorize="hasRole('ROLE_CREATOR')">Creator</a>
+                <a sec:authorize="isAnonymous()">Anonymous</a>
             </li>
         </ul>
     </div>

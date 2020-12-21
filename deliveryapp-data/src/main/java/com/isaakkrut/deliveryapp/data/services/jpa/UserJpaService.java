@@ -30,6 +30,11 @@ public class UserJpaService implements UserService{
     }
 
     @Override
+    public void deleteUserByEmail(String username) {
+        userRepository.deleteByEmail(username);
+    }
+
+    @Override
     public Set<User> findAll() {
         Set<User> users = new HashSet<>();
         userRepository.findAll().forEach(users::add);

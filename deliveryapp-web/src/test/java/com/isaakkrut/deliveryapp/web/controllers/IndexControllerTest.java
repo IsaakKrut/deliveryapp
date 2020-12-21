@@ -16,6 +16,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
@@ -114,28 +115,17 @@ class IndexControllerTest {
         verify(mockOrder).deleteItemById(anyLong());
     }
 
+    @WithMockUser(value = "spring")
     @Test
     void getCheckoutPageSignedInUser() throws Exception{
-        //when
-        when(mockUser.isEmpty()).thenReturn(false);
 
         //then
-        mockMvc.perform(get("/checkout").sessionAttr("user", mockUser))
+        mockMvc.perform(get("/checkout"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("checkout"));
 
         verify(mockUser).isEmpty();
 
-    }
-
-    @Test
-    void getCheckoutPageNoUser() throws Exception{
-
-        //when
-        when(mockUser.isEmpty()).thenReturn(true);
-        mockMvc.perform(get("/checkout").sessionAttr("user", mockUser))
-                .andExpect(status().is3xxRedirection());
-        verify(mockUser).isEmpty();
     }
 
     @Test
@@ -173,15 +163,6 @@ class IndexControllerTest {
             .andExpect(status().isOk())
             .andExpect(view().name("signin"));
         verify(userService).validateUser(any());
-    }
-
-    @Test
-    void signout() throws Exception{
-
-        mockMvc.perform(get("/signout")
-                .sessionAttr("user", mockUser))
-                .andExpect(status().is3xxRedirection());
-        verify(mockUser).clear();
     }
 
     @Test

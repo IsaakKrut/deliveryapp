@@ -7,6 +7,7 @@ import com.isaakkrut.deliveryapp.data.dto.UserDTO;
 import com.isaakkrut.deliveryapp.data.services.*;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -22,7 +23,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 
 @Controller
-@SessionAttributes({"order", "user"})
+@SessionAttributes({"order"})
 public class IndexController {
 
     private final EmailService emailService;
@@ -45,11 +46,6 @@ public class IndexController {
         return new Order();
     }
 
-    @ModelAttribute("user")
-    public User user(){
-        return new User();
-    }
-
 
     @RequestMapping({"", "/", "/home"})
     public String getIndexPage(){
@@ -62,7 +58,7 @@ public class IndexController {
         model.addAttribute("categoriesDTO", categories);
         return "menu";
     }
-    @PreAuthorize("hasRole('ROLE_USER')")
+
     @PostMapping("/order/items/{id}")
     public String addItemToTheCart(@PathVariable Long id, @SessionAttribute("order") Order order){
 
@@ -72,25 +68,21 @@ public class IndexController {
         }
         return "redirect:/menu";
     }
-    @PreAuthorize("hasRole('ROLE_USER')")
+
     @RequestMapping("/order/items/delete/{id}")
     public String deleteFromCart(@PathVariable Long id, @SessionAttribute("order") Order order){
         order.deleteItemById(id);
         return "redirect:/menu";
     }
 
-    @PreAuthorize("hasRole('ROLE_USER')")
+
     @RequestMapping("/checkout")
     public String getCheckoutPage(Model model, Principal principal){
 
-        User user = userService.getUserByEmail(principal.getName());
-        model.addAttribute("user", user);
- /*       if (user1.isEmpty()) {
-            return "redirect:/signin";
-        }*/
+        model.addAttribute("email", principal.getName());
         return "checkout";
     }
-    @PreAuthorize("hasRole('ROLE_USER')")
+
     @RequestMapping("/signin")
     public String getLoginPage(){
         return "redirect:/account";
@@ -101,29 +93,10 @@ public class IndexController {
         return "signin";
     }
 
-    /*@PostMapping("/signin")
-    public String signIn(Model model, @ModelAttribute("login") Login login, @SessionAttribute User user){
-
-        if ( user!= null && userService.validateUser(login)){
-            User signedInUser = userService.getUserByEmail(login.getUserName());
-            user.setEmail(signedInUser.getEmail());
-            user.setPassword(signedInUser.getPassword());
-            user.setFirstName(signedInUser.getFirstName());
-            user.setLastName(signedInUser.getLastName());
-            user.setBirthDate(signedInUser.getBirthDate());
-            user.setId(signedInUser.getId());
-            return "redirect:/account";
-        } else {
-            model.addAttribute("error", "Invalid login or password");
-            return "signin";
-        }
-
-    }*/
 
     @RequestMapping("/register")
-    public String getRegistrationPage(@SessionAttribute("user") User user, UserDTO userDTO){
-        if (user.isEmpty()) {
-            //model.addAttribute("userDTO", new UserDTO());
+    public String getRegistrationPage(Authentication authentication, UserDTO userDTO){
+        if (!authentication.isAuthenticated()) {
             return "userform";
         }
         else return "redirect:/account";
@@ -131,14 +104,16 @@ public class IndexController {
 
     @PostMapping("/register")
     public String registerUser(@Valid UserDTO userDTO,
-                               BindingResult result, @SessionAttribute User user){
+                               BindingResult result){
         if (result.hasErrors()){
             return "userform";
         }
-        if (user.isEmpty() && userService.getUserByEmail(userDTO.getDtoEmail()) != null){
+
+        //TODO: ensure user does not already exists
+        /*if (user.isEmpty() && userService.getUserByEmail(userDTO.getDtoEmail()) != null){
             result.rejectValue("dtoEmail", "user.emailerror", "User already exists");
             return "userform";
-        }
+        }*/
 
         //saving the user
         User userToSave = UserConverter.userDtoToUser(userDTO);
@@ -146,18 +121,10 @@ public class IndexController {
 
         emailService.welcomeEmail(savedUser);
 
-        //storing the new user in the session attribute (signing in)
-        user.setId(savedUser.getId());
-        user.setEmail(savedUser.getEmail());
-        user.setPassword(savedUser.getPassword());
-        user.setFirstName(savedUser.getFirstName());
-        user.setLastName(savedUser.getLastName());
-        user.setBirthDate(savedUser.getBirthDate());
-
-        return "redirect:/account";
+        return "redirect:/home";
     }
 
-    @PreAuthorize("hasRole('ROLE_USER')")
+
     @RequestMapping("/account")
     public String getAccountPage(Principal principal, Model model){
         User user = userService.getUserByEmail(principal.getName());
@@ -167,7 +134,7 @@ public class IndexController {
         return "account";
     }
 
-    @PreAuthorize("hasRole('ROLE_USER')")
+
     @RequestMapping("account/edit")
     public String editAccount(Principal principal, Model model){
         User user = userService.getUserByEmail(principal.getName());
@@ -175,25 +142,21 @@ public class IndexController {
         return "userform";
     }
 
-    @PreAuthorize("hasRole('ROLE_USER')")
+
     @RequestMapping("account/delete")
-    public String deleteAccount(Principal principal){
-        User user = userService.getUserByEmail(principal.getName());
-
-        //delete user from the database
-        userService.delete(user);
-
+    public String deleteAccount(Authentication authentication){
+        //userService.deleteUserByEmail(authentication.getName());
         //send last email
-        emailService.deleteAccountEmail(user);
+        //emailService.deleteAccountEmail(authentication.getName());
 
-        //clear user from the session
-        user.clear();
-        return "redirect:/home";
+        //log out the user
+        return "redirect:/signout";
     }
 
-    @PreAuthorize("hasRole('ROLE_USER')")
+
     @RequestMapping("/order/submit")
-    public String submitOrder(@SessionAttribute User user, @SessionAttribute Order order){
+    public String submitOrder(Principal principal, @SessionAttribute Order order){
+        User user = userService.getUserByEmail(principal.getName());
         order.setEmail(user.getEmail());
         order.setOrderDate(new Timestamp(System.currentTimeMillis()));
 

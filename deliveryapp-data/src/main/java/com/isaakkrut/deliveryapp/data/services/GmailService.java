@@ -8,7 +8,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 @Service
 public class GmailService implements EmailService {
@@ -63,15 +62,15 @@ public class GmailService implements EmailService {
     }
 
     @Override
-    public void deleteAccountEmail(User user) {
+    public void deleteAccountEmail(String user) {
 
             StringBuilder emailBody = new StringBuilder("IsaakDelivery\n\n" +
-                    user.getFirstName() + " " + user.getLastName() +
+                    user +
                     ", we are sorry to see you go" +
                     "\n\n\nIsaak Krut, IsaakDelivery");
             SimpleMailMessage message = new SimpleMailMessage();
             message.setFrom("IsaakDelivery@gmail.com");
-            message.setTo(user.getEmail());
+            message.setTo(user);
             message.setSubject("Account deleted");
             message.setText(emailBody.toString());
             //emailSender.send(message);
