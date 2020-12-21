@@ -13,8 +13,7 @@
 <div th:replace="fragments/header :: navbar(${order.totalPrice})"></div>
 <div class="container">
 
-    <form action="#"  th:action="@{/register}" th:object="${userDTO}" method="post" class="mt-5">
-        <input type="hidden" th:field="*{id}"/>
+    <form action="#"  th:action="@{/register}" th:object="${userDto}" method="post" class="mt-5">
         <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger">
             <p>Please Correct Errors Below</p>
         </div>
@@ -25,9 +24,10 @@
                     <div>
                         <div class="form-group row" th:classappend="${#fields.hasErrors('dtoEmail')} ? 'has-error'">
                             <label class="col-1" for="email" th:text="#{email}">Email</label>
-                            <input class="col-2" type="text" id="email" placeholder="Email" th:field="*{dtoEmail}">
+                            <input class="col-2" type="text" id="email" placeholder="Email" th:field="*{dtoEmail}" value="" required="required">
                         </div>
                         <div class="row">
+                            <span th:if="${message!= null}" th:text="${message}" class="danger">User already exists</span>
                             <span class="help-block" th:if="${#fields.hasErrors('dtoEmail')}">
                             <ul>
                                 <li th:each="err : ${#fields.errors('dtoEmail')}" th:text="${err}"/>
@@ -38,7 +38,7 @@
                     <div>
                         <div class="form-group row" th:classappend="${#fields.hasErrors('dtoPassword')} ? 'has-error'">
                             <label class="col-1" for="password" th:text="#{password}">Password</label>
-                            <input class="col-2" type="password" id="password" placeholder="Password" th:field="*{dtoPassword}">
+                            <input class="col-2" type="password" id="password" placeholder="Password" th:field="*{dtoPassword}" value="" required="required">
                         </div>
                         <div class="row">
                             <span class="help-block" th:if="${#fields.hasErrors('dtoPassword')}">
@@ -60,7 +60,7 @@
                 <div class="panel-body">
                     <div class="row form-group" th:classappend="${#fields.hasErrors('dtoFirstName')} ? 'has-error'">
                         <label for="firstname" class="col-2 " th:text="#{firstName}">First Name</label>
-                        <input  type="text" id="firstname" placeholder="First Name" class="col-2" th:field="*{dtoFirstName}">
+                        <input  type="text" id="firstname" placeholder="First Name" class="col-2" th:field="*{dtoFirstName}" value="" required="required">
                     </div> <!-- form-group firstName row-->
                     <div class="row">
                         <span class="help-block" th:if="${#fields.hasErrors('dtoFirstName')}">
@@ -71,7 +71,7 @@
                     </div>
                     <div class="form-group row" th:classappend="${#fields.hasErrors('dtoLastName')} ? 'has-error'">
                         <label for="lastName" class="col-2 " th:text="#{lastName}">Last Name</label>
-                        <input  type="text" id="lastName" placeholder="Last Name" class="col-2" th:field="*{dtoLastName}">
+                        <input  type="text" id="lastName" placeholder="Last Name" class="col-2" th:field="*{dtoLastName}" value="" required="required">
                     </div> <!-- form-group lastName row-->
                     <div class="row">
                         <span class="help-block" th:if="${#fields.hasErrors('dtoLastName')}">
@@ -82,7 +82,7 @@
                     </div>
                     <div class="form-group row" th:classappend="${#fields.hasErrors('dtoBirthDate')} ? 'has-error'">
                         <label for="birthDate" class="col-2 " th:text="#{dateOfBirth}">Date of Birth</label>
-                        <input  type="date" id="birthDate" class="col-2" th:field="*{dtoBirthDate}">
+                        <input  type="date" id="birthDate" class="col-2" th:field="*{dtoBirthDate}" value="" required="required">
                     </div> <!-- form-group password row-->
                     <div class="row">
                         <span class="help-block" th:if="${#fields.hasErrors('dtoBirthDate')}">
@@ -102,6 +102,8 @@
         </div>
 
     </form> <!-- form -->
+<br/>
+<a th:href="@{/signin}" th:text="#{signin}">login</a>
 </div>
 
 <div th:replace="fragments/footer :: footer"></div>

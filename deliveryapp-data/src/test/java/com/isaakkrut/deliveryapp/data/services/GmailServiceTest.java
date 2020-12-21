@@ -46,13 +46,13 @@ class GmailServiceTest {
 
     @Test
     void welcomeEmail() {
-        service.welcomeEmail(user);
+       // service.welcomeEmail(user);
         verify(mailSender, times(1)).send(any(SimpleMailMessage.class));
     }
 
     @Test
     void deleteAccountEmail() {
-        service.welcomeEmail(user);
+        service.deleteAccountEmail("emailString");
         verify(mailSender, times(1)).send(any(SimpleMailMessage.class));
     }
 }

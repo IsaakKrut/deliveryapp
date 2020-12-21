@@ -23,11 +23,6 @@ public class UserJpaService implements UserService{
         return userRepository.findByEmail(email).orElse(null);
     }
 
-    @Override
-    public Boolean validateUser(Login login) {
-        Optional<User> userOptional = userRepository.findByEmail(login.getUserName());
-        return userOptional.isPresent() &&  ((String) userOptional.get().getPassword()).equals(login.getUserPassword());
-    }
 
     @Override
     public void deleteUserByEmail(String username) {

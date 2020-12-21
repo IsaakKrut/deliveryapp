@@ -23,4 +23,9 @@ public class SecurityUserServiceJpa implements SecurityUserService {
             return null;
         }
     }
+
+    @Override
+    public void registerUser(SecurityUserEntity securityUserEntity) {
+        securityUserRepository.save(securityUserEntity);
+    }
 }

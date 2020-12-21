@@ -5,6 +5,9 @@ import com.isaakkrut.deliveryapp.data.domain.*;
 import com.isaakkrut.deliveryapp.data.dto.CategoryListDTO;
 import com.isaakkrut.deliveryapp.data.dto.UserDTO;
 import com.isaakkrut.deliveryapp.data.services.*;
+import com.isaakkrut.deliveryapp.security.UserAlreadyExistsException;
+import com.isaakkrut.deliveryapp.security.services.RegistrationService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -22,6 +25,7 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 
+@RequiredArgsConstructor
 @Controller
 @SessionAttributes({"order"})
 public class IndexController {
@@ -31,15 +35,7 @@ public class IndexController {
     private final ItemService itemService;
     private final UserService userService;
     private final OrderService orderService;
-
-    public IndexController(EmailService emailService, CategoryService categoryService,
-                           ItemService itemService, UserService userService, OrderService orderService) {
-        this.emailService = emailService;
-        this.categoryService = categoryService;
-        this.itemService = itemService;
-        this.userService = userService;
-        this.orderService = orderService;
-    }
+    private final RegistrationService registrationService;
 
     @ModelAttribute("order")
     public Order order(){
@@ -93,35 +89,29 @@ public class IndexController {
         return "signin";
     }
 
-
-    @RequestMapping("/register")
-    public String getRegistrationPage(Authentication authentication, UserDTO userDTO){
-        if (!authentication.isAuthenticated()) {
-            return "userform";
-        }
-        else return "redirect:/account";
+    @GetMapping("/register")
+    public String getRegistrationPage(Model model, Authentication authentication){
+        model.addAttribute("userDto", new UserDTO());
+        return "userform";
     }
 
     @PostMapping("/register")
-    public String registerUser(@Valid UserDTO userDTO,
-                               BindingResult result){
+    public String registerUser(@ModelAttribute("userDto") @Valid UserDTO userDTO,
+                               BindingResult result, Model model){
         if (result.hasErrors()){
             return "userform";
         }
 
-        //TODO: ensure user does not already exists
-        /*if (user.isEmpty() && userService.getUserByEmail(userDTO.getDtoEmail()) != null){
-            result.rejectValue("dtoEmail", "user.emailerror", "User already exists");
+        try{
+            registrationService.registerUser(userDTO);
+        } catch (UserAlreadyExistsException e) {
+            model.addAttribute("message", e.getMessage());
             return "userform";
-        }*/
+        }
 
-        //saving the user
-        User userToSave = UserConverter.userDtoToUser(userDTO);
-        User savedUser = userService.save(userToSave);
+        emailService.welcomeEmail(userDTO);
 
-        emailService.welcomeEmail(savedUser);
-
-        return "redirect:/home";
+        return "redirect:/signin";
     }
 
 

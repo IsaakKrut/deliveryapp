@@ -124,7 +124,6 @@ class IndexControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("checkout"));
 
-        verify(mockUser).isEmpty();
 
     }
 
@@ -141,7 +140,6 @@ class IndexControllerTest {
     void signInSuccess() throws Exception {
 
         //when
-        when(userService.validateUser(any())).thenReturn(true);
         when(userService.getUserByEmail(any())).thenReturn(new User());
 
         //then
@@ -150,26 +148,21 @@ class IndexControllerTest {
                 .sessionAttr("user", new User()))
                 .andExpect(status().is3xxRedirection());
 
-        verify(userService).validateUser(any());
     }
     @Test
     void signInFail() throws Exception{
         //when
-        when(userService.validateUser(any())).thenReturn(false);
 
         mockMvc.perform(post("/signin")
                 .flashAttr("login", new Login())
                 .sessionAttr("user", new User()))
             .andExpect(status().isOk())
             .andExpect(view().name("signin"));
-        verify(userService).validateUser(any());
     }
 
     @Test
     void getRegistrationPageNoSignedInUser() throws Exception{
         //when
-        when(mockUser.isEmpty()).thenReturn(true);
-
         //then
         mockMvc.perform(get("/register")
                 .sessionAttr("user", mockUser))
@@ -182,7 +175,6 @@ class IndexControllerTest {
     void getRegistrationPageSignedInUser() throws Exception{
 
         //when
-        when(mockUser.isEmpty()).thenReturn(false);
 
         //then
         mockMvc.perform(get("/register")

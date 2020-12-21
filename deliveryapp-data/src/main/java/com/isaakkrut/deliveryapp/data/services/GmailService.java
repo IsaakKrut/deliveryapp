@@ -3,6 +3,7 @@ package com.isaakkrut.deliveryapp.data.services;
 import com.isaakkrut.deliveryapp.data.domain.Order;
 import com.isaakkrut.deliveryapp.data.domain.OrderItem;
 import com.isaakkrut.deliveryapp.data.domain.User;
+import com.isaakkrut.deliveryapp.data.dto.UserDTO;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -47,15 +48,15 @@ public class GmailService implements EmailService {
     }
 
     @Override
-    public void welcomeEmail(User user) {
+    public void welcomeEmail(UserDTO user) {
 
         StringBuilder emailBody = new StringBuilder("Welcome, " +
-                                    user.getFirstName() + " " + user.getLastName() +
+                                    user.getDtoFirstName() + " " + user.getDtoLastName() +
                                     "\n\nWe can't wait until you make your first order with us. Enjoy our deals!!!" +
                                     "\n\n\nIsaak Krut, IsaakDelivery");
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom("IsaakDelivery@gmail.com");
-        message.setTo(user.getEmail());
+        message.setTo(user.getDtoEmail());
         message.setSubject("Welcome to IsaakDelivery");
         message.setText(emailBody.toString());
         //emailSender.send(message);
