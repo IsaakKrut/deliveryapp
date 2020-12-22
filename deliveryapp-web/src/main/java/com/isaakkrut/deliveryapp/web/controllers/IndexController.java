@@ -24,6 +24,7 @@ import java.security.Principal;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.Set;
 
 @RequiredArgsConstructor
 @Controller
@@ -36,6 +37,7 @@ public class IndexController {
     private final UserService userService;
     private final OrderService orderService;
     private final RegistrationService registrationService;
+    private final UserConverter userConverter;
 
     @ModelAttribute("order")
     public Order order(){
@@ -91,8 +93,13 @@ public class IndexController {
 
     @GetMapping("/register")
     public String getRegistrationPage(Model model, Authentication authentication){
-        model.addAttribute("userDto", new UserDTO());
-        return "userform";
+        if (authentication!= null && authentication.isAuthenticated()){
+            return "redirect:/account";
+        } else {
+            model.addAttribute("userDto", new UserDTO());
+            return "userform";
+        }
+
     }
 
     @PostMapping("/register")
@@ -115,23 +122,30 @@ public class IndexController {
     }
 
 
+    @PreAuthorize("hasRole('ROLE_USER')")
     @RequestMapping("/account")
     public String getAccountPage(Principal principal, Model model){
         User user = userService.getUserByEmail(principal.getName());
-        UserDTO userToDisplay = UserConverter.userToUserDTO(user);
-        orderService.getOrdersByEmail(userToDisplay.getDtoEmail()).forEach(userToDisplay::addOrder);
+        UserDTO userToDisplay = userConverter.userToUserDTO(user);
+
+        Set<Order> orders = orderService.getOrdersByEmail(principal.getName());
+        if (orders!= null && orders.size() > 0){
+            orders.forEach(userToDisplay::addOrder);
+        }
+
         model.addAttribute("userDto", userToDisplay);
         return "account";
     }
 
-
+    @PreAuthorize("hasRole('ROLE_USER')")
     @RequestMapping("account/edit")
     public String editAccount(Principal principal, Model model){
         User user = userService.getUserByEmail(principal.getName());
-        model.addAttribute("userDto", UserConverter.userToUserDTO(user));
+        model.addAttribute("userDto", userConverter.userToUserDTO(user));
         return "editform";
     }
 
+    @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping("account/edit/submit")
     public String editAccountSubmit(@ModelAttribute("userDto") @Valid UserDTO userDTO,
                                     BindingResult result, Model model){
@@ -140,15 +154,17 @@ public class IndexController {
             return "editform";
         }
 
-        userService.save(UserConverter.userDtoToUser(userDTO));
+        userService.save(userConverter.userDtoToUser(userDTO));
 
         return "redirect:/account";
     }
 
 
 
+    @PreAuthorize("hasRole('ROLE_USER')")
     @RequestMapping("account/delete")
     public String deleteAccount(Authentication authentication){
+        //TODO: delete account logic
         //userService.deleteUserByEmail(authentication.getName());
         //send last email
         //emailService.deleteAccountEmail(authentication.getName());
@@ -157,7 +173,7 @@ public class IndexController {
         return "redirect:/signout";
     }
 
-
+    @PreAuthorize("hasRole('ROLE_USER')")
     @RequestMapping("/order/submit")
     public String submitOrder(Principal principal, @SessionAttribute Order order){
         User user = userService.getUserByEmail(principal.getName());
@@ -174,6 +190,11 @@ public class IndexController {
         //clear Session order
         order.clear();
         return "confirmation";
+    }
+
+    @RequestMapping("/accessdenied")
+    public String accessDenied(){
+        return "accessdenied";
     }
 
 

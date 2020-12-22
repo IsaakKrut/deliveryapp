@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Delivery App</title>
+</head>
+<style>
+    body {
+        padding-top: 70px;
+    }
+</style>
+<body>
+<div th:replace="fragments/header :: navbar(${order.totalPrice})"></div>
+<div class="container">
+    <h2 class="bg-danger text-center">Access Denied</h2>
+</div>
+
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

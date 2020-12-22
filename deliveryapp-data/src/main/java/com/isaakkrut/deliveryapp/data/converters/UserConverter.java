@@ -2,10 +2,12 @@ package com.isaakkrut.deliveryapp.data.converters;
 
 import com.isaakkrut.deliveryapp.data.domain.User;
 import com.isaakkrut.deliveryapp.data.dto.UserDTO;
+import org.springframework.stereotype.Component;
 
+@Component
 public class UserConverter {
 
-    public static User userDtoToUser(UserDTO userDTO){
+    public User userDtoToUser(UserDTO userDTO){
         return User.builder()
                 .id(userDTO.getId())
                 .email(userDTO.getDtoEmail())
@@ -15,7 +17,7 @@ public class UserConverter {
                 .build();
     }
 
-    public static UserDTO userToUserDTO(User user){
+    public UserDTO userToUserDTO(User user){
         return UserDTO.builder()
                 .id(user.getId())
                 .dtoEmail(user.getEmail())

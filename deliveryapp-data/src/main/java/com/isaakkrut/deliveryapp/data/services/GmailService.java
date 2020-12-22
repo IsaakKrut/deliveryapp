@@ -43,7 +43,7 @@ public class GmailService implements EmailService {
         message.setTo(order.getEmail());
         message.setSubject("Order Placed");
         message.setText(emailBody.toString());
-        //emailSender.send(message);
+        emailSender.send(message);
 
     }
 
@@ -59,7 +59,7 @@ public class GmailService implements EmailService {
         message.setTo(user.getDtoEmail());
         message.setSubject("Welcome to IsaakDelivery");
         message.setText(emailBody.toString());
-        //emailSender.send(message);
+        emailSender.send(message);
     }
 
     @Override
@@ -74,7 +74,7 @@ public class GmailService implements EmailService {
             message.setTo(user);
             message.setSubject("Account deleted");
             message.setText(emailBody.toString());
-            //emailSender.send(message);
+            emailSender.send(message);
     }
 
 }

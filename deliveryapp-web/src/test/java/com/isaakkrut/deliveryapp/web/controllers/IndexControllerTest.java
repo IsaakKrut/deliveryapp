@@ -1,26 +1,38 @@
 package com.isaakkrut.deliveryapp.web.controllers;
 
+import com.isaakkrut.deliveryapp.data.converters.UserConverter;
 import com.isaakkrut.deliveryapp.data.domain.Item;
 import com.isaakkrut.deliveryapp.data.domain.Login;
 import com.isaakkrut.deliveryapp.data.domain.Order;
 import com.isaakkrut.deliveryapp.data.domain.User;
 import com.isaakkrut.deliveryapp.data.dto.UserDTO;
-import com.isaakkrut.deliveryapp.data.services.CategoryService;
-import com.isaakkrut.deliveryapp.data.services.EmailService;
-import com.isaakkrut.deliveryapp.data.services.ItemService;
-import com.isaakkrut.deliveryapp.data.services.UserService;
+import com.isaakkrut.deliveryapp.data.services.*;
+import com.isaakkrut.deliveryapp.security.services.RegistrationService;
+import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.internal.util.collections.Sets;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
+import java.util.Arrays;
 import java.util.HashSet;
 
 import static org.mockito.Mockito.*;
@@ -30,60 +42,55 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@ExtendWith(MockitoExtension.class)
+@ExtendWith(SpringExtension.class)
+@WebMvcTest(IndexController.class)
 class IndexControllerTest {
 
-    @Mock
-    CategoryService categoryService;
-    @Mock
-    ItemService itemService;
-    @Mock
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockBean
+    OrderService orderService;
+
+    @MockBean
     UserService userService;
-    @Mock
+
+    @MockBean
+    ItemService itemService;
+
+    @MockBean
     EmailService emailService;
 
-    @InjectMocks
-    IndexController controller;
+    @MockBean
+    CategoryService categoryService;
 
-    MockMvc mockMvc;
+    @MockBean
+    RegistrationService registrationService;
 
-    User mockUser;
-    Order mockOrder;
+    @MockBean
+    PasswordEncoder passwordEncoder;
 
-    @BeforeEach
-    void setUp() {
-        mockUser = mock(User.class);
-        mockOrder = mock(Order.class);
+    @MockBean
+    UserDetailsService userDetailsService;
 
-        InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
-        viewResolver.setPrefix("/templates/");
-        viewResolver.setSuffix(".html");
+    @MockBean
+    UserConverter userConverter;
 
-        mockMvc = MockMvcBuilders
-                .standaloneSetup(controller)
-                .setViewResolvers(viewResolver)
-                .build();
-    }
+    User mockUser = mock(User.class);
+    Order mockOrder = mock(Order.class);
 
-    @AfterEach
-    void tearDown() {
-        mockUser = null;
-        mockOrder = null;
-    }
 
     @Test
     void getIndexPage() throws Exception {
         mockMvc.perform(get("/"))
                 .andExpect(status().isOk())
-                .andExpect(model().attributeExists("user", "order"))
+                .andExpect(model().attributeExists( "order"))
                 .andExpect(view().name("index"));
     }
 
     @Test
     void getMenu() throws Exception {
         //when
-        when(itemService.findAll()).thenReturn(new HashSet<>());
-        when(categoryService.findAll()).thenReturn(new HashSet<>());
 
         //then
         mockMvc.perform(get("/menu"))
@@ -93,26 +100,6 @@ class IndexControllerTest {
 
         verify(itemService, times(1)).findAll();
         verify(categoryService, times(1)).findAll();
-    }
-
-    @Test
-    void addItemToTheCart() throws Exception {
-        //when
-        when(itemService.findById(anyLong())).thenReturn(Item.builder().id(1L).build());
-
-        //then
-        mockMvc.perform(post("/order/items/1").sessionAttr("order", mockOrder))
-                .andExpect(status().is3xxRedirection());
-
-        verify(mockOrder).addItem(any());
-    }
-
-    @Test
-    void deleteFromCart() throws Exception{
-        mockMvc.perform(get("/order/items/delete/1").sessionAttr("order", mockOrder))
-                .andExpect(status().is3xxRedirection());
-
-        verify(mockOrder).deleteItemById(anyLong());
     }
 
     @WithMockUser(value = "spring")
@@ -128,57 +115,37 @@ class IndexControllerTest {
     }
 
     @Test
-    void getLoginPage() throws Exception {
+    void requestSignInAnonymousUser() throws Exception {
 
         mockMvc.perform(get("/signin"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("http://localhost/login"));
+    }
+
+    @WithMockUser
+    @Test
+    void requestSignInSignedInUser() throws Exception {
+
+        mockMvc.perform(get("/signin"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/account"));
+    }
+
+    @WithAnonymousUser
+    @Test
+    void getRegistrationPageAnonymousInUser() throws Exception{
+
+        mockMvc.perform(get("/register"))
                 .andExpect(status().isOk())
-                .andExpect(model().attributeExists("login"))
-                .andExpect(view().name("signin"));
-    }
-
-    @Test
-    void signInSuccess() throws Exception {
-
-        //when
-        when(userService.getUserByEmail(any())).thenReturn(new User());
-
-        //then
-        mockMvc.perform(post("/signin")
-                .flashAttr("login", new Login())
-                .sessionAttr("user", new User()))
-                .andExpect(status().is3xxRedirection());
-
-    }
-    @Test
-    void signInFail() throws Exception{
-        //when
-
-        mockMvc.perform(post("/signin")
-                .flashAttr("login", new Login())
-                .sessionAttr("user", new User()))
-            .andExpect(status().isOk())
-            .andExpect(view().name("signin"));
-    }
-
-    @Test
-    void getRegistrationPageNoSignedInUser() throws Exception{
-        //when
-        //then
-        mockMvc.perform(get("/register")
-                .sessionAttr("user", mockUser))
-                .andExpect(status().isOk())
-                .andExpect(model().attributeExists("userDTO"))
+                .andExpect(model().attributeExists("userDto"))
                 .andExpect(view().name("userform"));
     }
 
+    @WithMockUser
     @Test
     void getRegistrationPageSignedInUser() throws Exception{
 
-        //when
-
-        //then
-        mockMvc.perform(get("/register")
-                        .sessionAttr("user", mockUser))
+        mockMvc.perform(get("/register"))
                 .andExpect(status().is3xxRedirection());
     }
 
@@ -188,8 +155,7 @@ class IndexControllerTest {
 
         //then
         mockMvc.perform(post("/register")
-                .flashAttr("userDTO", new UserDTO())
-                .sessionAttr("user", new User()))
+                .flashAttr("userDto", new UserDTO()))
                 .andExpect(view().name("userform"));
 
         verify(userService, times(0)).getUserByEmail(any());
@@ -199,25 +165,31 @@ class IndexControllerTest {
     @Test
     void registerUserSuccess() throws Exception{
 
-        //when
-        when(userService.getUserByEmail(any())).thenReturn(null);
-        when(userService.save(any())).thenReturn(new User());
-
-        //then
         mockMvc.perform(post("/register")
                     .param("dtoEmail", "ik@gmail.com")
                     .param("dtoPassword", "12345678")
                     .param("dtoFirstName", "Isaak")
                     .param("dtoLastName", "Krut")
-                    .param("dtoBirthDate", "1999-01-07")
-                    .sessionAttr("user", new User()))
+                    .param("dtoBirthDate", "1999-01-07"))
                 .andExpect(status().is3xxRedirection());
 
-        verify(userService, times(1)).save(any());
     }
 
 
+    @WithMockUser
     @Test
-    void getAccountPage() {
+    void getAccountPageUser() throws Exception {
+        when(orderService.getOrdersByEmail(any())).thenReturn(Sets.newSet());
+        when(userConverter.userToUserDTO(any())).thenReturn(new UserDTO());
+        mockMvc.perform(get("/account"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("userDto"));
+    }
+
+    @WithAnonymousUser
+    @Test
+    void getAccountPageAnonymousUser() throws Exception {
+        mockMvc.perform(get("/account"))
+                .andExpect(status().is3xxRedirection());
     }
 }

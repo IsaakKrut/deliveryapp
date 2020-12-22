@@ -29,6 +29,7 @@ public class RegistrationServiceImpl implements RegistrationService {
     private final RoleService roleService;
     private final SecurityUserService securityUserService;
     private final PasswordEncoder passwordEncoder;
+    private final UserConverter userConverter;
 
     @Transactional
     @Override
@@ -54,6 +55,6 @@ public class RegistrationServiceImpl implements RegistrationService {
 
         roleService.saveAll(userRoles);
         securityUserService.registerUser(userEntity);
-        userService.save(UserConverter.userDtoToUser(userDTO));
+        userService.save(userConverter.userDtoToUser(userDTO));
     }
 }

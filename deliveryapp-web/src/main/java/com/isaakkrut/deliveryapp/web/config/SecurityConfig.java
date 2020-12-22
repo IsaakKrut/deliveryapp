@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final PasswordEncoder passwordEncoder;
-    private final ApplicationUserDetailsService userService;
+    private final UserDetailsService userService;
 
 
     @Override
@@ -60,7 +60,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .clearAuthentication(true)
                     .invalidateHttpSession(true)
                     .deleteCookies("JSESSIONID", "remember-me")
-                    .logoutSuccessUrl("/menu");
+                    .logoutSuccessUrl("/menu")
+                .and()
+                    .exceptionHandling().accessDeniedPage("/accessdenied");
 
     }
 
